@@ -4,6 +4,9 @@ import os
 from flask import Flask, jsonify, render_template, request
 import gspread
 
+import pycurl
+from urllib.parse import urlencode
+
 class Tickets:
     def __init__(self):
         manual_sheet_name = "Cash Bash (Manual)"
@@ -29,9 +32,39 @@ class Tickets:
             return self._ticket_list[ticket_number - 1]
         return False
 
+def validatePaypalPurchase(tx, auth_token):
+    pp_hostname = "www.paypal.com"
+    url = "https://{pp_hostname}/cgi-bin/webscr"
+    host = "Host: {pp_hostname}"
+
+    data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
+    post_data = "&".join([f"{k}={v}" for k, v in data.items()])
+    buffer = BytesIO()
+
+    c = pycurl.Curl()
+    c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
+    c.setopt(c.POST, 1)
+    c.setopt(c.RETURNTRANSFER, 1)
+    c.setopt(c.POSTFIELDS, post_data)
+    c.setopt(c.SSL_VERIFYPEER, 1)
+    c.setopt(c.SSL_VERIFYHOST, 2)
+    c.setopt(c.HTTPHEADER, [host.format(pp_hostname = pp_hostname)])
+    c.setopt(c.WRITEDATA, buffer)
+    c.perform()
+    code = c.getinfo(c.RESPONSE_CODE)
+    c.close()
+
+    response = buffer.getvalue()
+    return (200 == code), {"response":response, "code":code}
+
+
+    # data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
+    # response = "&".join([f"{k}={v}" for k, v in data.items()])
+
+
 app = Flask(__name__)
 
-def getTicketArrayMap():
+def generateExampleTicketArrayMap():
     ticket_map_array = []
     for i in range(1, 501):
         avail = True
@@ -43,7 +76,7 @@ def getTicketArrayMap():
 
 def getTicketBlocks():
 
-    ticket_map_array = getTicketArrayMap()
+    ticket_map_array = generateExampleTicketArrayMap()
 
     def getTicketBlock(ticket):
         available="""
@@ -81,6 +114,21 @@ def getTicketBlocks():
 @app.route("/hello")
 def hello_world():
     return jsonify("hello, world!")
+
+@app.route("/success")
+def success():
+
+    tx = ""
+    if request.method == 'GET':
+      tx = request.args.get('tx')
+
+    auth_token = os.getenv('PAYPAL_AUTH_TOKEN')
+
+    valid, details = validatePaypalPurchase(tx, auth_token)
+
+    if valid:
+        return render_template("success.html", userdetails = details)
+    return jsonify(details)
 
 @app.route("/")
 def index():
