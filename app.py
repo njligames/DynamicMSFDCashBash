@@ -29,7 +29,8 @@ class Tickets:
 
     def is_sold(self, ticket_number):
         if ticket_number >= 1 and ticket_number <= 500:
-            return self._ticket_list[ticket_number - 1]
+            if self._ticket_list[ticket_number - 1][1].upper() == "TRUE":
+                return True
         return False
 
 def validatePaypalPurchase(tx, auth_token):
@@ -74,9 +75,21 @@ def generateExampleTicketArrayMap():
         ticket_map_array.append(ticket)
     return ticket_map_array
 
+def loadTicketArrayMap():
+    tickets = Tickets()
+
+    ticket_map_array = []
+    for i in range(1, 501):
+        avail = not tickets.is_sold(i)
+        ticket = {'available':avail, 'ticket_number':i}
+        print(ticket)
+        ticket_map_array.append(ticket)
+    return ticket_map_array
+
 def getTicketBlocks():
 
-    ticket_map_array = generateExampleTicketArrayMap()
+    # ticket_map_array = generateExampleTicketArrayMap()
+    ticket_map_array = loadTicketArrayMap()
 
     def getTicketBlock(ticket):
         available="""
@@ -85,7 +98,8 @@ def getTicketBlocks():
             class="btn btn-primary btn-custom"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal{ticket_number}"
-            data-whatever="{ticket_number}">Ticket #{ticket_number}
+            data-whatever="{ticket_number}"
+            >Ticket #{ticket_number}
         </button>
         """
 
@@ -99,6 +113,7 @@ def getTicketBlocks():
             disabled>Ticket #{ticket_number}
         </button>
         """
+
         if ticket['available']:
             return available.format(ticket_number = ticket['ticket_number'])
         else:
@@ -136,3 +151,4 @@ def index():
 
 if __name__ == "__main__":
     app.run()
+
