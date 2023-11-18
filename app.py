@@ -75,8 +75,8 @@ def validatePaypalPurchase(tx, auth_token):
     return (200 == code), {"response":response.decode('utf-8'), "code":code}
 
 
-    data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
-    response = "&".join([f"{k}={v}" for k, v in data.items()])
+    # data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
+    # response = "&".join([f"{k}={v}" for k, v in data.items()])
 
 
 app = Flask(__name__)
