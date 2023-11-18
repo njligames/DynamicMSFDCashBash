@@ -4,9 +4,9 @@ import os
 from flask import Flask, jsonify, render_template, request
 import gspread
 
-# import pycurl
-# from urllib.parse import urlencode
-# from io import BytesIO
+import pycurl
+from urllib.parse import urlencode
+from io import BytesIO
 
 class Tickets:
     def __init__(self):
@@ -48,31 +48,31 @@ def validatePaypalPurchase(tx, auth_token):
     self._range = 'A2:B501'
     self._ticket_list = self._wks.get(self._range)
 
-    # pp_hostname = "www.paypal.com"
-    # url = "https://{pp_hostname}/cgi-bin/webscr"
-    # host = "Host: {pp_hostname}"
+    pp_hostname = "www.paypal.com"
+    url = "https://{pp_hostname}/cgi-bin/webscr"
+    host = "Host: {pp_hostname}"
 
-    # data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
-    # post_data = "&".join([f"{k}={v}" for k, v in data.items()])
-    # buffer = BytesIO()
+    data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
+    post_data = "&".join([f"{k}={v}" for k, v in data.items()])
+    buffer = BytesIO()
 
-    # c = pycurl.Curl()
-    # c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
-    # c.setopt(pycurl.VERBOSE, 1)
-    # c.setopt(pycurl.DEBUGFUNCTION, debug_output)
-    # c.setopt(c.POST, 1)
-    # # c.setopt(c.RETURNTRANSFER, 1)
-    # c.setopt(c.POSTFIELDS, post_data)
-    # c.setopt(c.SSL_VERIFYPEER, 1)
-    # c.setopt(c.SSL_VERIFYHOST, 2)
-    # c.setopt(c.HTTPHEADER, [host.format(pp_hostname = pp_hostname)])
-    # c.setopt(c.WRITEDATA, buffer)
-    # c.perform()
-    # code = c.getinfo(c.RESPONSE_CODE)
-    # c.close()
+    c = pycurl.Curl()
+    c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
+    c.setopt(pycurl.VERBOSE, 1)
+    c.setopt(pycurl.DEBUGFUNCTION, debug_output)
+    c.setopt(c.POST, 1)
+    # c.setopt(c.RETURNTRANSFER, 1)
+    c.setopt(c.POSTFIELDS, post_data)
+    c.setopt(c.SSL_VERIFYPEER, 1)
+    c.setopt(c.SSL_VERIFYHOST, 2)
+    c.setopt(c.HTTPHEADER, [host.format(pp_hostname = pp_hostname)])
+    c.setopt(c.WRITEDATA, buffer)
+    c.perform()
+    code = c.getinfo(c.RESPONSE_CODE)
+    c.close()
 
-    # response = buffer.getvalue()
-    # return (200 == code), {"response":response.decode('utf-8'), "code":code}
+    response = buffer.getvalue()
+    return (200 == code), {"response":response.decode('utf-8'), "code":code}
 
 
     data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
