@@ -8,6 +8,8 @@ import pycurl
 from urllib.parse import urlencode
 from io import BytesIO
 
+from datetime import datetime
+
 class Tickets:
     def __init__(self):
         manual_sheet_name = "Cash Bash (Manual)"
@@ -38,15 +40,19 @@ def debug_output(debug_type, debug_msg):
     data = "DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg.decode('utf-8'))
     print(data)
 
-def validatePaypalPurchase(tx, auth_token):
-
+def recordAttempt(response):
     computer_sheet_name = "Cash Bash (Website)"
     sa = gspread.service_account(filename="service_account.json")
     computer_sheet = sa.open(computer_sheet_name)
 
-    self._wks = computer_sheet.worksheet("2024 Paypal Log")
-    self._range = 'A2:B501'
-    self._ticket_list = self._wks.get(self._range)
+    worksheet = computer_sheet.worksheet("2024 Paypal Log")
+
+    now = datetime.now()
+    body=[now, response]
+    worksheet.append_row(body, table_range="A1:B1")
+
+def validatePaypalPurchase(tx, auth_token):
+
 
     pp_hostname = "www.paypal.com"
     url = "https://{pp_hostname}/cgi-bin/webscr"
@@ -72,6 +78,7 @@ def validatePaypalPurchase(tx, auth_token):
     c.close()
 
     response = buffer.getvalue()
+    recordAttempt(response.decode('utf-8'))
     return (200 == code), {"response":response.decode('utf-8'), "code":code}
 
 
