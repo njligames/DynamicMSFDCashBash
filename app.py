@@ -48,7 +48,8 @@ def recordAttempt(response):
     worksheet = computer_sheet.worksheet("2024 Paypal Log")
 
     now = datetime.now()
-    body=[now, response]
+    dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
+    body=[dt_string, response]
     worksheet.append_row(body, table_range="A1:B1")
 
 def validatePaypalPurchase(tx, auth_token):
