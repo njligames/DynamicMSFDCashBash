@@ -139,6 +139,8 @@ def success():
     tx = ""
     if request.method == 'GET':
       tx = request.args.get('tx')
+    if None == tx:
+        tx = ""
 
     auth_token = os.getenv('PAYPAL_AUTH_TOKEN')
 
