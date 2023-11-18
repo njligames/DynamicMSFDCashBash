@@ -43,6 +43,8 @@ def validatePaypalPurchase(tx, auth_token):
     post_data = "&".join([f"{k}={v}" for k, v in data.items()])
     buffer = BytesIO()
 
+    print("post_data = " + post_data)
+
     c = pycurl.Curl()
     c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
     c.setopt(c.POST, 1)
@@ -140,7 +142,7 @@ def success():
 
     auth_token = os.getenv('PAYPAL_AUTH_TOKEN')
 
-    valid, details = validatePaypalPurchase(tx, auth_token)
+    valid, details = validatePaypalPurchase(tx.upper(), auth_token)
 
     if valid:
         return render_template("success.html", userdetails = details)
