@@ -6,6 +6,7 @@ import gspread
 
 import pycurl
 from urllib.parse import urlencode
+from io import BytesIO
 
 class Tickets:
     def __init__(self):
