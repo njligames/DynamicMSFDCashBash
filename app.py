@@ -46,7 +46,7 @@ def validatePaypalPurchase(tx, auth_token):
     c = pycurl.Curl()
     c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
     c.setopt(c.POST, 1)
-    c.setopt(c.RETURNTRANSFER, 1)
+    # c.setopt(c.RETURNTRANSFER, 1)
     c.setopt(c.POSTFIELDS, post_data)
     c.setopt(c.SSL_VERIFYPEER, 1)
     c.setopt(c.SSL_VERIFYHOST, 2)
