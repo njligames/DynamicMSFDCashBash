@@ -35,8 +35,7 @@ class Tickets:
         return False
 
 def debug_output(debug_type, debug_msg):
-
-    print("DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg))
+    print("DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg).decode('utf-8'))
 
 def validatePaypalPurchase(tx, auth_token):
     pp_hostname = "www.paypal.com"
@@ -47,9 +46,9 @@ def validatePaypalPurchase(tx, auth_token):
     post_data = "&".join([f"{k}={v}" for k, v in data.items()])
     buffer = BytesIO()
 
-    print("post_data = " + post_data)
-    print("url = " + url.format(pp_hostname = pp_hostname))
-    print("HTTPHEADER = " + str([host.format(pp_hostname = pp_hostname)]))
+    # print("post_data = " + post_data)
+    # print("url = " + url.format(pp_hostname = pp_hostname))
+    # print("HTTPHEADER = " + str([host.format(pp_hostname = pp_hostname)]))
 
     c = pycurl.Curl()
     c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
