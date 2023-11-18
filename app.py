@@ -35,7 +35,8 @@ class Tickets:
         return False
 
 def debug_output(debug_type, debug_msg):
-    print "DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg)
+
+    print("DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg))
 
 def validatePaypalPurchase(tx, auth_token):
     pp_hostname = "www.paypal.com"
