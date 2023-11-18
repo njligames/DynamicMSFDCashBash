@@ -57,7 +57,7 @@ def validatePaypalPurchase(tx, auth_token):
     c.close()
 
     response = buffer.getvalue()
-    return (200 == code), {"response":response, "code":code}
+    return (200 == code), {"response":response.decode('utf-8'), "code":code}
 
 
     # data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
