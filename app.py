@@ -34,6 +34,9 @@ class Tickets:
                 return True
         return False
 
+def debug_output(debug_type, debug_msg):
+    print "DynamicMSFDCashBash - debug(%d): %s" % (debug_type, debug_msg)
+
 def validatePaypalPurchase(tx, auth_token):
     pp_hostname = "www.paypal.com"
     url = "https://{pp_hostname}/cgi-bin/webscr"
@@ -44,9 +47,13 @@ def validatePaypalPurchase(tx, auth_token):
     buffer = BytesIO()
 
     print("post_data = " + post_data)
+    print("url = " + url.format(pp_hostname = pp_hostname))
+    print("HTTPHEADER = " + str([host.format(pp_hostname = pp_hostname)]))
 
     c = pycurl.Curl()
     c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
+    c.setopt(pycurl.VERBOSE, 1)
+    c.setopt(pycurl.DEBUGFUNCTION, debug_output)
     c.setopt(c.POST, 1)
     # c.setopt(c.RETURNTRANSFER, 1)
     c.setopt(c.POSTFIELDS, post_data)
