@@ -1,14 +1,26 @@
+from requests.auth import HTTPBasicAuth
+import requests
 import os
 
 # import stripe
 from flask import Flask, jsonify, render_template, request
 import gspread
 
-import pycurl
-from urllib.parse import urlencode
-from io import BytesIO
+# import pycurl
+# from urllib.parse import urlencode
+# from io import BytesIO
 
 from datetime import datetime
+
+# # # # PAYPAL SANDBOX
+PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_BUSINESS_CLIENT_ID")
+PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_BUSINESS_SECRET")
+PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
+
+# # # # PAYPAL LIVE Details
+# PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_LIVE_BUSINESS_CLIENT_ID")
+# PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_LIVE_BUSINESS_SECRET")
+# PAYPAL_API_URL = f"https://api-m.paypal.com"
 
 class Tickets:
     def __init__(self):
@@ -120,8 +132,8 @@ def loadTicketArrayMap():
 
 def getTicketBlocks():
 
-    # ticket_map_array = generateExampleTicketArrayMap()
-    ticket_map_array = loadTicketArrayMap()
+    ticket_map_array = generateExampleTicketArrayMap()
+    # ticket_map_array = loadTicketArrayMap()
 
     def getTicketBlock(ticket):
         available="""
@@ -246,30 +258,30 @@ def getModalBlocks():
 
                 <!-- TODO: edit so that it uses paypal api -->
                 <!-- start button for a ticket -->
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_self">
-                   <input type="hidden" name="cmd" value="_s-xclick">
-                   <input type="hidden" name="hosted_button_id" value="{cart_value}">
+                <form name="MyForm" action="payment" onsubmit="return validateForm()" method="post" target="_self">
+                   <input type="hidden" name="cmd" value="_s-xclick" />
+                   <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
                       <tr>
-                         <td><input type="hidden" name="on0" value="Cash Bash Ticket #{ticket_number}">Cash Bash Ticket #{ticket_number}</td>
+                         <td><input type="hidden" name="on0" value="Cash Bash Ticket #{ticket_number}" />Cash Bash Ticket #{ticket_number}</td>
                       </tr>
                       <tr>
                          <td>
                             <select name="os0">
-                               <option value="Ticket">Ticket $100.00 USD</option>
-                               <option value="Ticket & Chance">Ticket & Chance $105.00 USD</option>
+                               <option value="100">Ticket $100.00 USD</option>
+                               <option value="105">Ticket & Chance $105.00 USD</option>
                             </select>
                          </td>
                       </tr>
                       <tr>
-                         <td><input type="hidden" name="on1" value="Winner Contact #">Winner Contact #</td>
+                         <td><input type="hidden" name="on1" value="Winner Contact #" />Winner Contact #</td>
                       </tr>
                       <tr>
-                         <td><input type="text" name="os1" maxlength="200"></td>
+                         <td><input type="text" name="os1" maxlength="200" required /></td>
                       </tr>
                    </table>
-                   <input type="hidden" name="currency_code" value="USD">
-                   <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                   <input type="hidden" name="currency_code" value="USD" />
+                   <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" />
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
                 <!-- end button for a ticket -->
@@ -315,6 +327,50 @@ def success():
 @app.route("/")
 def index():
     return render_template("index.html", ticket_len = len(getTicketBlocks()), tickets = getTicketBlocks(), modal_len = len(getModalBlocks()), modals = getModalBlocks())
+
+@app.route('/payment', methods=['POST'])
+def payment():
+    data = request.form
+
+    ticket_number = data["ticket_number"]
+    phone_number = data["os1"]
+    price = data["os0"]
+    currency = "USD"
+
+    return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, ticket_number = ticket_number, phone_number = phone_number, price = price)
+
+@app.route("/payment/<order_id>/capture", methods=["POST"])
+def capture_payment(order_id):  # Checks and confirms payment
+    captured_payment = paypal_capture_function(order_id)
+    # print(captured_payment)
+    if is_approved_payment(captured_payment):
+        # Do something (for example Update user field)
+        pass
+    return jsonify(captured_payment)
+
+
+def paypal_capture_function(order_id):
+    post_route = f"/v2/checkout/orders/{order_id}/capture"
+    paypal_capture_url = PAYPAL_API_URL + post_route
+    basic_auth = HTTPBasicAuth(PAYPAL_BUSINESS_CLIENT_ID, PAYPAL_BUSINESS_SECRET)
+    headers = {
+        "Content-Type": "application/json",
+    }
+    response = requests.post(url=paypal_capture_url, headers=headers, auth=basic_auth)
+    response.raise_for_status()
+    json_data = response.json()
+    return json_data
+
+def is_approved_payment(captured_payment):
+    status = captured_payment.get("status")
+    amount = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get("value")
+    currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get(
+        "currency_code")
+    print(f"Payment happened. Details: {status}, {amount}, {currency_code}")
+    if status == "COMPLETED":
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     app.run(port=4242)
