@@ -363,7 +363,7 @@ def capture_payment(order_id):  # Checks and confirms payment
         json_data = json.loads(my_json)
         ticket_number = json_data["ticket_number"]
 
-        setTicketSold(ticket_number)
+        setTicketSold(int(ticket_number))
 
     return jsonify(captured_payment)
 
@@ -373,7 +373,7 @@ def validate_ticket(ticket_number):
     message = "The ticket is sold. Ticket #"
 
 
-    if not isTicketAvailable(ticket_number):
+    if not isTicketAvailable(int(ticket_number)):
         validationError = True
         message += str(ticket_number)
 
