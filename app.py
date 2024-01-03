@@ -7,9 +7,9 @@ import json
 from flask import Flask, jsonify, render_template, request
 import gspread
 
-# import pycurl
-# from urllib.parse import urlencode
-# from io import BytesIO
+import pycurl
+from urllib.parse import urlencode
+from io import BytesIO
 
 from datetime import datetime
 
@@ -143,8 +143,8 @@ def setTicketSold(ticket_number):
 
 def getTicketBlocks():
 
-    ticket_map_array = generateExampleTicketArrayMap()
-    # ticket_map_array = loadTicketArrayMap()
+    # ticket_map_array = generateExampleTicketArrayMap()
+    ticket_map_array = loadTicketArrayMap()
 
     def getTicketBlock(ticket):
         available="""
