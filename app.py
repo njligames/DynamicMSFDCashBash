@@ -356,9 +356,10 @@ def capture_payment(order_id):  # Checks and confirms payment
     data = request.data
 
     captured_payment = paypal_capture_function(order_id)
+    print("captured_payment")
+    print(captured_payment)
 
     if is_approved_payment(captured_payment):
-        # Do something (for example Update user field)
         my_json = data.decode('utf8').replace("'", '"')
         json_data = json.loads(my_json)
         ticket_number = json_data["ticket_number"]
