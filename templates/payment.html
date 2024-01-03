@@ -17,33 +17,50 @@
                         <div id="paypal-button-container"></div>
                         <script>
                             paypal.Buttons({
-                                // Sets up the transaction when a payment button is clicked
+                                onClick: function(data, actions) {
+                                    return fetch(`/payment/{{ticket_number}}/validate`, {
+                                        method: "post",
+                                    })
+                                        .then((response) => response.json())
+                                        .then((data) => {
+                                            if (data.validationError) {
+                                                alert(data.message);
+                                              return actions.reject();
+                                            } else {
+                                              return actions.resolve();
+                                            }
+                                        });
+                                },
+                                style: {
+                                    layout: 'vertical',
+                                    color:  'blue',
+                                    shape:  'rect',
+                                    label:  'paypal'
+                                  },
                                 createOrder: (data, actions) => {
                                     return actions.order.create({
                                         purchase_units: [{
-                                            description: 'Ticket Number {{ ticket_number }}',
+                                            description: 'Phone # {{ phone_number }}, Ticket # {{ ticket_number }}',
                                             amount: {
                                                 value: '{{ price }}' // Can also reference a variable or function
                                             }
                                         }]
                                     });
                                 },
-                                // Finalize the transaction after payer approval
-                                // Finalize the transaction on the server after payer approval
                                 onApprove: (data, actions) => {
                                     return fetch(`/payment/${data.orderID}/capture`, {
                                         method: "post",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({ticket_number:'{{ticket_number}}'})
                                     })
                                         .then((response) => response.json())
                                         .then((orderData) => {
-                                            // Successful capture! For dev/demo purposes:
                                             console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
                                             const transaction = orderData.purchase_units[0].payments.captures[0];
-                                            // alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
-                                            // When ready to go live, remove the alert and show a success message within this page. For example:
                                             const element = document.getElementById('paypal-button-container');
-                                            element.innerHTML = '<p><h3><strong class="green_text"> Thank you for your payment!</strong></h3></p><p>Check your user profile for confirmation.</p>';
-                                            // Or go to another URL:  actions.redirect('thank_you.html');
+                                            element.innerHTML = '<p><h3><strong class="green_text"> Thank you for your payment!</strong></h3></p>';
                                         });
                                 }
                             }).render('#paypal-button-container');

@@ -1,6 +1,7 @@
 from requests.auth import HTTPBasicAuth
 import requests
 import os
+import json
 
 # import stripe
 from flask import Flask, jsonify, render_template, request
@@ -114,8 +115,7 @@ def generateExampleTicketArrayMap():
 def generateExampleModalArrayMap():
     modal_map_array = []
     for i in range(1, 501):
-        cart_value='VSAPQMG6VEPXY'
-        ticket = {'cart_value':cart_value, 'ticket_number':i}
+        ticket = {'ticket_number':i}
         modal_map_array.append(ticket)
     return modal_map_array
 
@@ -174,7 +174,7 @@ def getTicketBlocks():
 def getModalBlocks():
     modal_map_array = generateExampleModalArrayMap()
 
-    def getModalBlock(ticket_number, cart_value):
+    def getModalBlock(ticket_number):
         code_txt = """
         <div
           class="modal fade bd-example-modal-lg"
@@ -258,7 +258,7 @@ def getModalBlocks():
 
                 <!-- TODO: edit so that it uses paypal api -->
                 <!-- start button for a ticket -->
-                <form name="MyForm" action="payment" onsubmit="return validateForm()" method="post" target="_self">
+                <form name="MyForm" action="payment" onsubmit="return validateForm()" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
@@ -294,12 +294,12 @@ def getModalBlocks():
 
         """
 
-        return code_txt.format(ticket_number = ticket_number, cart_value = cart_value)
+        return code_txt.format(ticket_number = ticket_number)
 
     modal_array = []
 
     for modal in modal_map_array:
-        modal_array.append(getModalBlock(modal['ticket_number'], modal['cart_value']))
+        modal_array.append(getModalBlock(modal['ticket_number']))
 
     return modal_array
 
@@ -341,12 +341,29 @@ def payment():
 
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment
+    data = request.data
+
     captured_payment = paypal_capture_function(order_id)
-    # print(captured_payment)
+
     if is_approved_payment(captured_payment):
         # Do something (for example Update user field)
-        pass
+        my_json = data.decode('utf8').replace("'", '"')
+        json_data = json.loads(my_json)
+        ticket_number = json_data["ticket_number"]
+
+        # TODO: Set the ticket nubmer to sold
+
     return jsonify(captured_payment)
+
+@app.route("/payment/<ticket_number>/validate", methods=["POST"])
+def validate_ticket(ticket_number):
+    validationError = False
+    message = "The Message"
+
+    # TODO: Check of the ticket was sold
+    result = {"validationError":validationError, "message":message}
+
+    return jsonify(result)
 
 
 def paypal_capture_function(order_id):
