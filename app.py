@@ -140,6 +140,7 @@ def setTicketSold(ticket_number):
     if ticket_number >= 1 and ticket_number <= 500:
         tickets = Tickets()
         tickets.set_sold(ticket_number)
+        tickets.save()
 
 def getTicketBlocks():
 
@@ -356,8 +357,6 @@ def capture_payment(order_id):  # Checks and confirms payment
     data = request.data
 
     captured_payment = paypal_capture_function(order_id)
-    print("captured_payment")
-    print(captured_payment)
 
     if is_approved_payment(captured_payment):
         my_json = data.decode('utf8').replace("'", '"')
