@@ -130,6 +130,17 @@ def loadTicketArrayMap():
         ticket_map_array.append(ticket)
     return ticket_map_array
 
+def isTicketAvailable(ticket_number):
+    if ticket_number >= 1 and ticket_number <= 500:
+        tickets = Tickets()
+        return not tickets.is_sold(ticket_number)
+    return False
+
+def setTicketSold(ticket_number):
+    if ticket_number >= 1 and ticket_number <= 500:
+        tickets = Tickets()
+        tickets.set_sold(ticket_number)
+
 def getTicketBlocks():
 
     # ticket_map_array = generateExampleTicketArrayMap()
@@ -256,7 +267,6 @@ def getModalBlocks():
               <div class="col-xs-1" align="center">
 
 
-                <!-- TODO: edit so that it uses paypal api -->
                 <!-- start button for a ticket -->
                 <form name="MyForm" action="payment" onsubmit="return validateForm()" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
@@ -351,16 +361,20 @@ def capture_payment(order_id):  # Checks and confirms payment
         json_data = json.loads(my_json)
         ticket_number = json_data["ticket_number"]
 
-        # TODO: Set the ticket nubmer to sold
+        setTicketSold(ticket_number)
 
     return jsonify(captured_payment)
 
 @app.route("/payment/<ticket_number>/validate", methods=["POST"])
 def validate_ticket(ticket_number):
     validationError = False
-    message = "The Message"
+    message = "The ticket is sold. Ticket #"
 
-    # TODO: Check of the ticket was sold
+
+    if not isTicketAvailable(ticket_number):
+        validationError = True
+        message += str(ticket_number)
+
     result = {"validationError":validationError, "message":message}
 
     return jsonify(result)
