@@ -284,16 +284,3 @@
   new PureCounter();
 
 })()
-function validateForm() {
-    let subjectString = document.forms["MyForm"]["os1"].value;
-    var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-
-    if (phoneRegex.test(subjectString)) {
-        var formattedPhoneNumber =
-            subjectString.replace(phoneRegex, "($1) $2-$3");
-        return true;
-    }
-    msg = "Invalid phone number: " + subjectString;
-    alert(msg);
-    return false;
-}

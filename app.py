@@ -268,12 +268,14 @@ def getModalBlocks():
 
 
                 <!-- start button for a ticket -->
-                <form name="MyForm" action="payment" onsubmit="return validateForm()" method="post" target="_blank">
+                <form name="MyForm{ticket_number}" action="payment" onsubmit="
+let subjectString = document.forms["MyForm{ticket_number}"]["os1"].value; var phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/; if (phoneRegex.test(subjectString)) { var formattedPhoneNumber = subjectString.replace(phoneRegex, "($1) $2-$3"); return true; } msg = "Invalid phone number: " + subjectString; alert(msg); return false;
+" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
                       <tr>
-                         <td><input type="hidden" name="on0" value="Cash Bash Ticket #{ticket_number}" />Cash Bash Ticket #{ticket_number}</td>
+                         <td><input type="hidden" name="on0" value="{ticket_number}" />Cash Bash Ticket #{ticket_number}</td>
                       </tr>
                       <tr>
                          <td>
