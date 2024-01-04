@@ -3,13 +3,8 @@ import requests
 import os
 import json
 
-# import stripe
 from flask import Flask, jsonify, render_template, request
 import gspread
-
-import pycurl
-from urllib.parse import urlencode
-from io import BytesIO
 
 from datetime import datetime
 
@@ -49,10 +44,6 @@ class Tickets:
                 return True
         return False
 
-def debug_output(debug_type, debug_msg):
-    data = "DynamicMSFDCashBash - debug({debug_type}): {debug_msg}".format(debug_type = debug_type, debug_msg = debug_msg.decode('utf-8'))
-    print(data)
-
 def recordAttempt(response):
     computer_sheet_name = "Cash Bash (Website)"
     sa = gspread.service_account(filename="service_account.json")
@@ -65,52 +56,7 @@ def recordAttempt(response):
     body=[dt_string, response]
     worksheet.append_row(body, table_range="A1:B1")
 
-def validatePaypalPurchase(tx, auth_token):
-
-
-    pp_hostname = "www.paypal.com"
-    url = "https://{pp_hostname}/cgi-bin/webscr"
-    host = "Host: {pp_hostname}"
-
-    data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
-    post_data = "&".join([f"{k}={v}" for k, v in data.items()])
-    buffer = BytesIO()
-
-    c = pycurl.Curl()
-    c.setopt(c.URL, url.format(pp_hostname = pp_hostname))
-    c.setopt(pycurl.VERBOSE, 1)
-    c.setopt(pycurl.DEBUGFUNCTION, debug_output)
-    c.setopt(c.POST, 1)
-    # c.setopt(c.RETURNTRANSFER, 1)
-    c.setopt(c.POSTFIELDS, post_data)
-    c.setopt(c.SSL_VERIFYPEER, 1)
-    c.setopt(c.SSL_VERIFYHOST, 2)
-    c.setopt(c.HTTPHEADER, [host.format(pp_hostname = pp_hostname)])
-    c.setopt(c.WRITEDATA, buffer)
-    c.perform()
-    code = c.getinfo(c.RESPONSE_CODE)
-    c.close()
-
-    response = buffer.getvalue()
-    recordAttempt(response.decode('utf-8'))
-    return (200 == code), {"response":response.decode('utf-8'), "code":code}
-
-
-    # data = {"cmd":"_notify-synch", "tx":tx, "at":auth_token}
-    # response = "&".join([f"{k}={v}" for k, v in data.items()])
-
-
 app = Flask(__name__)
-
-def generateExampleTicketArrayMap():
-    ticket_map_array = []
-    for i in range(1, 501):
-        avail = True
-        if i % 2 == 0:
-            avail = False
-        ticket = {'available':avail, 'ticket_number':i}
-        ticket_map_array.append(ticket)
-    return ticket_map_array
 
 def generateExampleModalArrayMap():
     modal_map_array = []
@@ -144,7 +90,6 @@ def setTicketSold(ticket_number):
 
 def getTicketBlocks():
 
-    # ticket_map_array = generateExampleTicketArrayMap()
     ticket_map_array = loadTicketArrayMap()
 
     def getTicketBlock(ticket):
@@ -320,23 +265,6 @@ let subjectString = document.forms["MyForm{ticket_number}"]["os1"].value; var ph
 def hello_world():
     return jsonify("hello, world!")
 
-@app.route("/success")
-def success():
-
-    tx = ""
-    if request.method == 'GET':
-      tx = request.args.get('tx')
-    if None == tx:
-        tx = ""
-
-    auth_token = os.getenv('PAYPAL_AUTH_TOKEN')
-
-    valid, details = validatePaypalPurchase(tx.upper(), auth_token)
-
-    if valid:
-        return render_template("success.html", userdetails = details)
-    return jsonify(details)
-
 @app.route("/")
 def index():
     return render_template("index.html", ticket_len = len(getTicketBlocks()), tickets = getTicketBlocks(), modal_len = len(getModalBlocks()), modals = getModalBlocks())
@@ -358,13 +286,21 @@ def capture_payment(order_id):  # Checks and confirms payment
 
     captured_payment = paypal_capture_function(order_id)
 
+
     if is_approved_payment(captured_payment):
         my_json = data.decode('utf8').replace("'", '"')
         json_data = json.loads(my_json)
         ticket_number = json_data["ticket_number"]
-
         setTicketSold(int(ticket_number))
 
+        captured_payment["ticket_number"] = int(ticket_number)
+        captured_payment["phone_number"] = json_data["phone_number"]
+        captured_payment["price"] = json_data["price"]
+        captured_payment["payment_approved"] = True
+    else:
+        captured_payment["payment_approved"] = False
+
+    recordAttempt(str(captured_payment))
     return jsonify(captured_payment)
 
 @app.route("/payment/<ticket_number>/validate", methods=["POST"])
