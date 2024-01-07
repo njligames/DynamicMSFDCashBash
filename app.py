@@ -72,7 +72,6 @@ def loadTicketArrayMap():
     for i in range(1, 501):
         avail = not tickets.is_sold(i)
         ticket = {'available':avail, 'ticket_number':i}
-        print(ticket)
         ticket_map_array.append(ticket)
     return ticket_map_array
 
@@ -214,7 +213,7 @@ def getModalBlocks():
 
 
                 <!-- start button for a ticket -->
-                <form name="MyForm{ticket_number}" action="payment" onsubmit="
+                <form name="MyForm{ticket_number}" action="cart" onsubmit="
 let subjectString = document.forms["MyForm{ticket_number}"]["os1"].value; var phoneRegex = /^\(?([0-9]{{3}})\)?[-. ]?([0-9]{{3}})[-. ]?([0-9]{{4}})$/; if (phoneRegex.test(subjectString)) {{ var formattedPhoneNumber = subjectString.replace(phoneRegex, "($1) $2-$3"); return true; }} msg = "Invalid phone number: " + subjectString; alert(msg); return false;
 " method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
@@ -239,7 +238,9 @@ let subjectString = document.forms["MyForm{ticket_number}"]["os1"].value; var ph
                       </tr>
                    </table>
                    <input type="hidden" name="currency_code" value="USD" />
-                   <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" />
+
+
+                   <input class="close" data-bs-dismiss="modal" type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" />
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
                 <!-- end button for a ticket -->
@@ -279,6 +280,17 @@ def payment():
     currency = "USD"
 
     return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, ticket_number = ticket_number, phone_number = phone_number, price = price)
+
+@app.route('/cart', methods=['POST'])
+def cart():
+    data = request.form
+
+    ticket_number = data["ticket_number"]
+    phone_number = data["os1"]
+    price = data["os0"]
+    currency = "USD"
+
+    return render_template("cart.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, ticket_number = ticket_number, phone_number = phone_number, price = price)
 
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment
