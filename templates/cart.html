@@ -16,9 +16,120 @@
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
     ></script>
-    <script src="{{ url_for('static', filename='assets/js/Storage.js')}}"></script>
+    <script>
+function CheckBrowser() {
+  if ("localStorage" in window && window["localStorage"] !== null) {
+    // we can use localStorage object to store data
+    return true;
+  } else {
+    return false;
+  }
+}
+
+$(document).ready(function () {
+  const ticketViewLib = {
+    show: function () {
+        console.log("WTF");
+
+      $("#cashBashTickets").empty();
+
+      var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
+
+      $.each(tickets, function (index, value) {
+        ticketViewLib.cashBashTickets(value);
+      });
+
+      var myLinks = document.querySelectorAll("i.fa.fa-trash.mb-1.text-danger");
+      myLinks.forEach((myLink) => {
+        myLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            ticket_number = e.srcElement.id;
+
+            cashBashTickets = []
+
+              var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
+
+            for(var i = 0; i < tickets.length; i++) {
+                if(tickets[i] != ticket_number) {
+                    console.log(tickets[i]);
+                    cashBashTickets.push(tickets[i]);
+                }
+            }
+          localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
+            if(cashBashTickets.length == 0) {
+                window.close();
+            }
+            ticketViewLib.show();
+        });
+      });
+    },
+    cashBashTickets: function (ticket_number) {
+      $("<div>", { class: "card rounded-3 mb-4" })
+        .append(
+          $("<div>", { class: "card-body p-4" }).append(
+            $("<div>", {
+              class: "row d-flex justify-content-between align-items-center",
+            }).append(
+              $("<div>", { class: "col-md-2 col-lg-2 col-xl-2" }).append(
+                $("<img>", {
+                  class: "img-fluid rounded-3",
+                  src: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp",
+                  alt: "Cotton T-shirt",
+                })
+              ),
+              $("<div>", { class: "col-md-3 col-lg-3 col-xl-3" }).append(
+                $("<p>", { class: "lead fw-normal mb-2" }).text(
+                  "Cash Bash Ticket"
+                ),
+                $("<p>")
+                  .text("" + ticket_number)
+                  .prepend(
+                    $("<span>", { class: "text-muted" }).text("Ticket Number ")
+                  )
+              ),
+              $("<div>", {
+                class: "col-md-3 col-lg-3 col-xl-2 d-flex",
+              }).append(),
+              $("<div>", {
+                class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1",
+              }).append($("<h5>", { class: "mb-0" }).text("$100.00")),
+              $("<div>", { class: "d-flex align-items-center" }).append(
+                $("<a>", { href: "#!", class: "text-danger" }).append(
+                  $("<i>", {
+                    class: "fa fa-trash mb-1 text-danger",
+                    id: "" + ticket_number,
+                  })
+                )
+              )
+            )
+          )
+        )
+        .appendTo("#cashBashTickets");
+    },
+  };
+  if (CheckBrowser()) {
+
+      console.log("READ FROM CACHE " + {{ticket_number}});
+
+      count = localStorage.length
+      if(count == 0) {
+          var cashBashTickets = ["{{ticket_number}}"];
+
+          localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
+      } else {
+          var cashBashTickets = JSON.parse(localStorage.getItem("cashBashTickets"));
+          cashBashTickets.push("{{ticket_number}}");
+          localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
+      }
+      // cashBashTickets = localStorage.getItem("cashBashTickets");
+      // console.log(typeof cashBashTickets);
+
+      ticketViewLib.show();
+  }
+});
+    </script>
   </head>
-  <body className="snippet-body">
+      <body className="snippet-body">
     <div class="container mt-5 mb-5">
       <div class="d-flex justify-content-center row">
         <div class="col-md-8">
