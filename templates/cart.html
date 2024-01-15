@@ -52,10 +52,46 @@
               cashBashTicketsChanceNextYearCount[0]
             );
 
-            var myLinks = document.querySelectorAll(
+            // "fa fa-minus text-danger next-year"
+            var cashBashTicketTrashNextYearMinusLinks =
+              document.querySelectorAll("i.fa.fa-minus.text-danger.next-year");
+            cashBashTicketTrashNextYearMinusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("next-year minus");
+              });
+            });
+
+            // "fa fa-plus text-danger next-year"
+            var cashBashTicketTrashNextYearPlusLinks =
+              document.querySelectorAll("i.fa.fa-plus.text-success.next-year");
+            cashBashTicketTrashNextYearPlusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("next-year plus");
+              });
+            });
+
+            // "fa fa-minus text-danger this-year"
+            var cashBashTicketTrashThisYearMinusLinks =
+              document.querySelectorAll("i.fa.fa-minus.text-danger.this-year");
+            cashBashTicketTrashThisYearMinusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("this-year minus");
+              });
+            });
+
+            // "fa fa-plus text-danger this-year"
+            var cashBashTicketTrashThisYearPlusLinks =
+              document.querySelectorAll("i.fa.fa-plus.text-success.this-year");
+            cashBashTicketTrashThisYearPlusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("this-year plus");
+              });
+            });
+
+            var cashBashTicketTrashLinks = document.querySelectorAll(
               "i.fa.fa-trash.mb-1.text-danger"
             );
-            myLinks.forEach((myLink) => {
+            cashBashTicketTrashLinks.forEach((myLink) => {
               myLink.addEventListener("click", function (e) {
                 e.preventDefault();
                 ticket_number = e.srcElement.id;
@@ -129,7 +165,7 @@
               )
               .appendTo("#cashBashTickets");
           },
-          cashBashTicketsChanceNextYear: function (ticket_number) {
+          cashBashTicketsChanceNextYear: function (count) {
             $("<div>", { class: "card rounded-3 mb-4" })
               .append(
                 $("<div>", { class: "card-body p-4" }).append(
@@ -156,7 +192,17 @@
                     ),
                     $("<div>", {
                       class: "col-md-3 col-lg-3 col-xl-2 d-flex",
-                    }).append(),
+                    }).append(
+                      $("<a>", { href: "#!", class: "text-danger" }).append(
+                        $("<i>", { class: "fa fa-minus text-danger next-year" })
+                      ),
+                      $("<h5>", { class: "text-grey mt-1 mr-1 ml-1" }).text(
+                        "" + count
+                      ),
+                      $("<a>", { href: "#!", class: "text-danger" }).append(
+                        $("<i>", { class: "fa fa-plus text-success next-year" })
+                      )
+                    ),
                     $("<div>", {
                       class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1",
                     }).append($("<h5>", { class: "mb-0" }).text("$5.00"))
@@ -165,7 +211,7 @@
               )
               .appendTo("#cashBashTicketsChanceNextYear");
           },
-          cashBashTicketsChanceThisYear: function (ticket_number) {
+          cashBashTicketsChanceThisYear: function (count) {
             $("<div>", { class: "card rounded-3 mb-4" })
               .append(
                 $("<div>", { class: "card-body p-4" }).append(
@@ -192,7 +238,17 @@
                     ),
                     $("<div>", {
                       class: "col-md-3 col-lg-3 col-xl-2 d-flex",
-                    }).append(),
+                    }).append(
+                      $("<a>", { href: "#!", class: "text-danger" }).append(
+                        $("<i>", { class: "fa fa-minus text-danger this-year" })
+                      ),
+                      $("<h5>", { class: "text-grey mt-1 mr-1 ml-1" }).text(
+                        "" + count
+                      ),
+                      $("<a>", { href: "#!", class: "text-danger" }).append(
+                        $("<i>", { class: "fa fa-plus text-success this-year" })
+                      )
+                    ),
                     $("<div>", {
                       class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1",
                     }).append($("<h5>", { class: "mb-0" }).text("$10.00"))
