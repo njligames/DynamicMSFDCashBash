@@ -146,6 +146,18 @@ $(document).ready(function() {
                                 $('<span>', {class: "text-muted"}).text("Ticket Number ")
 
                             )
+                        ),
+                        $("<div>", {class: "col-md-3 col-lg-3 col-xl-2 d-flex"}).append(
+                        ),
+                        $("<div>", {class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1"}).append(
+                            $("<h5>", {class: "mb-0"}).text(
+                                "$100.00"
+                            )
+                        ),
+                        $("<div>", {class: "d-flex align-items-center"}).append(
+                            $("<a>", {href:"#!", class:"text-danger"}).append(
+                                $("<i>", {class: "fa fa-trash mb-1 text-danger"})
+                            )
                         )
                     )
                 )
