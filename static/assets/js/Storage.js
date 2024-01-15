@@ -105,3 +105,63 @@ function CheckBrowser() {
 /*
 You can extend this script by inserting data to database or adding payment processing API to shopping cart..
 */
+
+$(document).ready(function() {
+	const ticketViewLib = {
+        myspan: function() {
+            $('<span>').text('Some text')
+        },
+
+
+    mydiv: function(ticket_number) {
+      $('#outerdiv').append(
+        $('<div>').prop({
+          id: 'innerdiv',
+          innerHTML: 'Hi there! ' + ticket_number,
+          className: 'border pad'
+        })
+      );
+    },
+    mydiv2: function(ticket_number) {
+      $('#outerdiv2').append(
+        $('<div>').prop({
+          id: 'innerdiv',
+          innerHTML: "you " + ticket_number,
+          className: 'border pad'
+        })
+      );
+    },
+        mydiv3: function(ticket_number) {
+            $("<div>", {class: "card rounded-3 mb-4"}).append(
+                $("<div>", {class: "card-body p-4"}).append(
+                    $("<div>", {class: "row d-flex justify-content-between align-items-center"}).append(
+                        $("<div>", {class: "col-md-2 col-lg-2 col-xl-2"}).append(
+                            $('<img>',{class:'img-fluid rounded-3',src:'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp',alt:'Cotton T-shirt'})
+                        ),
+                        $("<div>", {class: "col-md-3 col-lg-3 col-xl-3"}).append(
+                            $("<p>", {class: "lead fw-normal mb-2"}).text(
+                                "Cash Bash Ticket"
+                            ),
+                            $("<p>").text( "" + ticket_number).prepend(
+                                $('<span>', {class: "text-muted"}).text("Ticket Number ")
+
+                            )
+                        )
+                    )
+                )
+            ).appendTo("#outerdiv2")
+
+        }
+  }
+	let tickets = [1, 2, 3];
+
+
+
+
+  $.each( tickets, function( index, value ){
+      //sum += value;
+      ticketViewLib.mydiv3(value);
+  });
+
+
+});
