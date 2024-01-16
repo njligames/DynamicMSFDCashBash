@@ -28,66 +28,12 @@
 
       $(document).ready(function () {
         const ticketViewLib = {
-          show: function () {
+          showCashBashTickets: function () {
             $("#cashBashTickets").empty();
-
             var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
             $.each(tickets, function (index, value) {
               ticketViewLib.cashBashTickets(value);
             });
-
-            $("#cashBashTicketsChanceThisYear").empty();
-            var cashBashTicketsChanceThisYearCount = JSON.parse(
-              localStorage.getItem("cashBashTicketsChanceThisYear")
-            );
-            ticketViewLib.cashBashTicketsChanceThisYear(
-              cashBashTicketsChanceThisYearCount[0]
-            );
-
-            $("#cashBashTicketsChanceNextYear").empty();
-            var cashBashTicketsChanceNextYearCount = JSON.parse(
-              localStorage.getItem("cashBashTicketsChanceNextYear")
-            );
-            ticketViewLib.cashBashTicketsChanceNextYear(
-              cashBashTicketsChanceNextYearCount[0]
-            );
-
-            // "fa fa-minus text-danger next-year"
-            var cashBashTicketTrashNextYearMinusLinks =
-              document.querySelectorAll("i.fa.fa-minus.text-danger.next-year");
-            cashBashTicketTrashNextYearMinusLinks.forEach((myLink) => {
-              myLink.addEventListener("click", function (e) {
-                console.log("next-year minus");
-              });
-            });
-
-            // "fa fa-plus text-danger next-year"
-            var cashBashTicketTrashNextYearPlusLinks =
-              document.querySelectorAll("i.fa.fa-plus.text-success.next-year");
-            cashBashTicketTrashNextYearPlusLinks.forEach((myLink) => {
-              myLink.addEventListener("click", function (e) {
-                console.log("next-year plus");
-              });
-            });
-
-            // "fa fa-minus text-danger this-year"
-            var cashBashTicketTrashThisYearMinusLinks =
-              document.querySelectorAll("i.fa.fa-minus.text-danger.this-year");
-            cashBashTicketTrashThisYearMinusLinks.forEach((myLink) => {
-              myLink.addEventListener("click", function (e) {
-                console.log("this-year minus");
-              });
-            });
-
-            // "fa fa-plus text-danger this-year"
-            var cashBashTicketTrashThisYearPlusLinks =
-              document.querySelectorAll("i.fa.fa-plus.text-success.this-year");
-            cashBashTicketTrashThisYearPlusLinks.forEach((myLink) => {
-              myLink.addEventListener("click", function (e) {
-                console.log("this-year plus");
-              });
-            });
-
             var cashBashTicketTrashLinks = document.querySelectorAll(
               "i.fa.fa-trash.mb-1.text-danger"
             );
@@ -115,9 +61,123 @@
                 if (cashBashTickets.length == 0) {
                   // window.close();
                 }
-                ticketViewLib.show();
+                ticketViewLib.showCashBashTickets();
               });
             });
+          },
+          showCashBashTicketsChanceThisYear: function () {
+            $("#cashBashTicketsChanceThisYear").empty();
+            var cashBashTicketsChanceThisYearCount = JSON.parse(
+              localStorage.getItem("cashBashTicketsChanceThisYear")
+            );
+            ticketViewLib.cashBashTicketsChanceThisYear(
+              cashBashTicketsChanceThisYearCount[0]
+            );
+            var cashBashTicketTrashThisYearMinusLinks =
+              document.querySelectorAll("i.fa.fa-minus.text-danger.this-year");
+            cashBashTicketTrashThisYearMinusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("this-year minus");
+                // text-grey mt-1 mr-1 ml-1 this-year
+                var thisYearh5Links = document.querySelectorAll(
+                  "h5.text-grey.mt-1.mr-1.ml-1.this-year"
+                );
+                thisYearh5Links.forEach((myLink) => {
+                  console.log(myLink.textContent);
+                  var val = parseInt(myLink.textContent);
+                  if (val > 0) {
+                    val--;
+                  }
+                  myLink.textContent = val.toString();
+                  localStorage.setItem(
+                    "cashBashTicketsChanceThisYear",
+                    JSON.stringify([val.toString()])
+                  );
+                });
+              });
+            });
+
+            var cashBashTicketTrashThisYearPlusLinks =
+              document.querySelectorAll("i.fa.fa-plus.text-success.this-year");
+            cashBashTicketTrashThisYearPlusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("this-year plus");
+                // text-grey mt-1 mr-1 ml-1 this-year
+                var thisYearh5Links = document.querySelectorAll(
+                  "h5.text-grey.mt-1.mr-1.ml-1.this-year"
+                );
+                thisYearh5Links.forEach((myLink) => {
+                  console.log(myLink.textContent);
+                  var val = parseInt(myLink.textContent);
+                  val++;
+                  myLink.textContent = val.toString();
+                  localStorage.setItem(
+                    "cashBashTicketsChanceThisYear",
+                    JSON.stringify([val.toString()])
+                  );
+                });
+              });
+            });
+          },
+          showCashBashTicketsChanceNextYear: function () {
+            $("#cashBashTicketsChanceNextYear").empty();
+            var cashBashTicketsChanceNextYearCount = JSON.parse(
+              localStorage.getItem("cashBashTicketsChanceNextYear")
+            );
+            ticketViewLib.cashBashTicketsChanceNextYear(
+              cashBashTicketsChanceNextYearCount[0]
+            );
+            var cashBashTicketTrashNextYearMinusLinks =
+              document.querySelectorAll("i.fa.fa-minus.text-danger.next-year");
+            cashBashTicketTrashNextYearMinusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("next-year minus");
+                // text-grey mt-1 mr-1 ml-1 next-year
+                var nextYearh5Links = document.querySelectorAll(
+                  "h5.text-grey.mt-1.mr-1.ml-1.next-year"
+                );
+                nextYearh5Links.forEach((myLink) => {
+                  console.log(myLink.textContent);
+                  var val = parseInt(myLink.textContent);
+                  if (val > 0) {
+                    val--;
+                  }
+                  myLink.textContent = val.toString();
+                  localStorage.setItem(
+                    "cashBashTicketsChanceNextYear",
+                    JSON.stringify([val.toString()])
+                  );
+                });
+              });
+            });
+
+            var cashBashTicketTrashNextYearPlusLinks =
+              document.querySelectorAll("i.fa.fa-plus.text-success.next-year");
+            cashBashTicketTrashNextYearPlusLinks.forEach((myLink) => {
+              myLink.addEventListener("click", function (e) {
+                console.log("next-year plus");
+                // text-grey mt-1 mr-1 ml-1 next-year
+                var nextYearh5Links = document.querySelectorAll(
+                  "h5.text-grey.mt-1.mr-1.ml-1.next-year"
+                );
+                nextYearh5Links.forEach((myLink) => {
+                  console.log(myLink.textContent);
+                  var val = parseInt(myLink.textContent);
+                  val++;
+                  myLink.textContent = val.toString();
+
+                  localStorage.setItem(
+                    "cashBashTicketsChanceNextYear",
+                    JSON.stringify([val.toString()])
+                  );
+                });
+              });
+            });
+          },
+          show: function () {
+            ticketViewLib.showCashBashTickets();
+            ticketViewLib.showCashBashTicketsChanceThisYear();
+            ticketViewLib.showCashBashTicketsChanceNextYear();
           },
           cashBashTickets: function (ticket_number) {
             $("<div>", { class: "card rounded-3 mb-4" })
@@ -196,9 +256,9 @@
                       $("<a>", { href: "#!", class: "text-danger" }).append(
                         $("<i>", { class: "fa fa-minus text-danger next-year" })
                       ),
-                      $("<h5>", { class: "text-grey mt-1 mr-1 ml-1" }).text(
-                        "" + count
-                      ),
+                      $("<h5>", {
+                        class: "text-grey mt-1 mr-1 ml-1 next-year",
+                      }).text("" + count),
                       $("<a>", { href: "#!", class: "text-danger" }).append(
                         $("<i>", { class: "fa fa-plus text-success next-year" })
                       )
@@ -242,9 +302,9 @@
                       $("<a>", { href: "#!", class: "text-danger" }).append(
                         $("<i>", { class: "fa fa-minus text-danger this-year" })
                       ),
-                      $("<h5>", { class: "text-grey mt-1 mr-1 ml-1" }).text(
-                        "" + count
-                      ),
+                      $("<h5>", {
+                        class: "text-grey mt-1 mr-1 ml-1 this-year",
+                      }).text("" + count),
                       $("<a>", { href: "#!", class: "text-danger" }).append(
                         $("<i>", { class: "fa fa-plus text-success this-year" })
                       )
