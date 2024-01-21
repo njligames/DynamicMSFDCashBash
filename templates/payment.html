@@ -1,75 +1,166 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div class="container text-center" data-aos="zoom-in" data-aos-delay="100">
+      <div class="card d-flex border-0">
+        {#PayPal form start#}
+        <!-- Replace "test" with your own sandbox Business account app client ID -->
+        <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_business_client_id }}&currency={{ currency }}"></script>
+        <!-- Set up a container element for the button -->
+        <div class="d-flex align-content-stretch flex-wrap">
+          <div class="card-body">
+            <div id="paypal-button-container"></div>
+            <script>
+              paypal
+                .Buttons({
+                  onClick: function (data, actions) {
+                    var tickets = JSON.parse(
+                      localStorage.getItem("cashBashTickets")
+                    );
+                    return fetch(`/payment/validate`, {
+                      method: "post",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        ticket_numbers: JSON.stringify(tickets),
+                      }),
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        if (data.validationError) {
+                          return actions.reject();
+                        } else {
+                          return actions.resolve();
+                        }
+                      });
+                  },
+                  style: {
+                    layout: "vertical",
+                    color: "blue",
+                    shape: "rect",
+                    label: "paypal",
+                  },
+                  createOrder: function (data, actions) {
+                    var tickets = JSON.parse(
+                      localStorage.getItem("cashBashTickets")
+                    );
+                    var numThisYearTickets = JSON.parse(
+                      localStorage.getItem("cashBashTicketsChanceThisYear")
+                    );
+                    var numNextYearTickets = JSON.parse(
+                      localStorage.getItem("cashBashTicketsChanceNextYear")
+                    );
 
+                    return fetch(`/payment/calculateTotal`, {
+                      method: "post",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        ticket_numbers: JSON.stringify(tickets),
+                        numThisYearTickets: JSON.stringify([
+                          numThisYearTickets,
+                        ]),
+                        numNextYearTickets: JSON.stringify([
+                          numNextYearTickets,
+                        ]),
+                        phoneNumber: "{{phone_number}}",
+                      }),
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        var totalPrice = data.total;
+                        var ticketNumbers = "";
+                        var numThisYearTickets = "";
+                        var numNextYearTickets = "";
 
-        <div class="container text-center" data-aos="zoom-in" data-aos-delay="100">
-            <div class="card d-flex border-0">
-                {#PayPal form start#}
-                <!-- Replace "test" with your own sandbox Business account app client ID -->
-                <script src="https://www.paypal.com/sdk/js?client-id={{ paypal_business_client_id }}&currency={{ currency }}"></script>
-                <!-- Set up a container element for the button -->
-                <div class="d-flex align-content-stretch flex-wrap">
-                    <div class="card-body">
-                        <div id="paypal-button-container"></div>
-                        <script>
-                            paypal.Buttons({
-                                onClick: function(data, actions) {
-                                    return fetch(`/payment/{{ticket_number}}/validate`, {
-                                        method: "post",
-                                    })
-                                        .then((response) => response.json())
-                                        .then((data) => {
-                                            if (data.validationError) {
-                                                alert(data.message);
-                                              return actions.reject();
-                                            } else {
-                                              return actions.resolve();
-                                            }
-                                        });
-                                },
-                                style: {
-                                    layout: 'vertical',
-                                    color:  'blue',
-                                    shape:  'rect',
-                                    label:  'paypal'
-                                  },
-                                createOrder: (data, actions) => {
-                                    return actions.order.create({
-                                        purchase_units: [{
-                                            description: 'Phone # {{ phone_number }}, Ticket # {{ ticket_number }}',
-                                            amount: {
-                                                value: '{{ price }}' // Can also reference a variable or function
-                                            }
-                                        }]
-                                    });
-                                },
-                                onApprove: (data, actions) => {
-                                    return fetch(`/payment/${data.orderID}/capture`, {
-                                        method: "post",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify({ticket_number:'{{ticket_number}}', phone_number:'{{phone_number}}', price:'{{price}}'})
-                                    })
-                                        .then((response) => response.json())
-                                        .then((orderData) => {
-                                            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                                            const transaction = orderData.purchase_units[0].payments.captures[0];
-                                            const element = document.getElementById('paypal-button-container');
-                                            element.innerHTML = '<p><h3><strong class="green_text"> Thank you for your payment!</strong></h3></p>';
-                                        });
-                                }
-                            }).render('#paypal-button-container');
-                        </script>
-                        {#            PayPal form end #}
-                    </div>
-                </div>
-            </div>
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              description:
+                                "Phone # " +
+                                "{{phone_number}}" +
+                                ", Ticket #'s " +
+                                ticketNumbers +
+                                ", Number of Next Year Ticket Chances " +
+                                numNextYearTickets +
+                                ", Number of This Year Ticket Chances " +
+                                numThisYearTickets,
+                              amount: {
+                                value: totalPrice, // Can also reference a variable or function
+                              },
+                            },
+                          ],
+                        });
+                      });
+                  },
+                  onApprove: (data, actions) => {
+                    var tickets = JSON.parse(
+                      localStorage.getItem("cashBashTickets")
+                    );
+                    var numThisYearTickets = JSON.parse(
+                      localStorage.getItem("cashBashTicketsChanceThisYear")
+                    );
+                    var numNextYearTickets = JSON.parse(
+                      localStorage.getItem("cashBashTicketsChanceNextYear")
+                    );
+
+                    return fetch(`/payment/${data.orderID}/capture`, {
+                      method: "post",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        ticket_numbers: JSON.stringify(tickets),
+                        numThisYearTickets: JSON.stringify([
+                          numThisYearTickets,
+                        ]),
+                        numNextYearTickets: JSON.stringify([
+                          numNextYearTickets,
+                        ]),
+                        phoneNumber: "{{phone_number}}",
+                      }),
+                    })
+                      .then((response) => response.json())
+                      .then((orderData) => {
+                        localStorage.setItem(
+                          "cashBashTickets",
+                          JSON.stringify([])
+                        );
+                        localStorage.setItem(
+                          "cashBashTicketsChanceThisYear",
+                          JSON.stringify([0])
+                        );
+                        localStorage.setItem(
+                          "cashBashTicketsChanceNextYear",
+                          JSON.stringify([0])
+                        );
+
+                        console.log(
+                          "Capture result",
+                          orderData,
+                          JSON.stringify(orderData, null, 2)
+                        );
+                        const transaction =
+                          orderData.purchase_units[0].payments.captures[0];
+                        const element = document.getElementById(
+                          "paypal-button-container"
+                        );
+                        element.innerHTML =
+                          '<p><h3><strong class="green_text"> Thank you for your payment!</strong></h3></p>';
+                      });
+                  },
+                })
+                .render("#paypal-button-container");
+            </script>
+            {# PayPal form end #}
+          </div>
         </div>
-
-</body>
+      </div>
+    </div>
+  </body>
 </html>

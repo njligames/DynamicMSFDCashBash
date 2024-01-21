@@ -213,35 +213,12 @@ def getModalBlocks():
 
 
                 <!-- start button for a ticket -->
-                <form name="MyForm{ticket_number}" action="cart" onsubmit="
-                    let subjectString = document.forms["MyForm{ticket_number}"]["os1"].value;
-                    var phoneRegex = /^\(?([0-9]{{3}})\)?[-. ]?([0-9]{{3}})[-. ]?([0-9]{{4}})$/;
-                    if (phoneRegex.test(subjectString)) {{
-                        var formattedPhoneNumber = subjectString.replace(phoneRegex, "($1) $2-$3");
-                        return true;
-                    }}
-                    return false;
-
-" method="post" target="_blank">
+                <form name="MyForm{ticket_number}" action="cart" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
                       <tr>
                          <td><input type="hidden" name="on0" value="{ticket_number}" />Cash Bash Ticket #{ticket_number}</td>
-                      </tr>
-                      <tr>
-                         <td>
-                            <select name="os0">
-                               <option value="100">Ticket $100.00 USD</option>
-                               <option value="105">Ticket & Chance $105.00 USD</option>
-                            </select>
-                         </td>
-                      </tr>
-                      <tr>
-                         <td><input type="hidden" name="on1" value="Winner Contact #" />Winner Contact #</td>
-                      </tr>
-                      <tr>
-                         <td><input type="text" name="os1" maxlength="200" required /></td>
                       </tr>
                    </table>
                    <input type="hidden" name="currency_code" value="USD" />
@@ -281,23 +258,19 @@ def index():
 def payment():
     data = request.form
 
-    ticket_number = data["ticket_number"]
     phone_number = data["os1"]
-    price = data["os0"]
     currency = "USD"
 
-    return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, ticket_number = ticket_number, phone_number = phone_number, price = price)
+    return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, phone_number = phone_number)
 
 @app.route('/cart', methods=['POST'])
 def cart():
     data = request.form
 
     ticket_number = data["ticket_number"]
-    phone_number = data["os1"]
-    price = data["os0"]
     currency = "USD"
 
-    return render_template("cart.html", ticket_number = ticket_number, phone_number = phone_number, price = price)
+    return render_template("cart.html", ticket_number = ticket_number)#, phone_number = phone_number, price = price)
 
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment
@@ -305,22 +278,76 @@ def capture_payment(order_id):  # Checks and confirms payment
 
     captured_payment = paypal_capture_function(order_id)
 
-
     if is_approved_payment(captured_payment):
         my_json = data.decode('utf8').replace("'", '"')
         json_data = json.loads(my_json)
-        ticket_number = json_data["ticket_number"]
-        setTicketSold(int(ticket_number))
+        ticket_numbers = json.loads(json_data["ticket_numbers"])
 
-        captured_payment["ticket_number"] = int(ticket_number)
-        captured_payment["phone_number"] = json_data["phone_number"]
-        captured_payment["price"] = json_data["price"]
+        numThisYearTickets = json.loads(json_data["numThisYearTickets"])
+        numNextYearTickets = json.loads(json_data["numNextYearTickets"])
+        phoneNumber = json.loads(json_data["phoneNumber"])
+
+        captured_tickets = ""
+        for ticket_number in ticket_numbers:
+          captured_tickets += str(ticket_number) + " "
+          setTicketSold(int(ticket_number))
+
+        captured_payment["ticket_numbers"] = captured_tickets 
+        captured_payment["num_chances_this_year"] = numThisYearTickets[0][0]
+        captured_payment["num_chances_next_year"] = numNextYearTickets[0][0]
+        captured_payment["phone_number"] = phoneNumber
         captured_payment["payment_approved"] = True
     else:
         captured_payment["payment_approved"] = False
 
     recordAttempt(str(captured_payment))
     return jsonify(captured_payment)
+
+@app.route("/payment/validate", methods=["POST"])
+def validate_tickets():
+    validationError = False
+    message = "The ticket is sold. Ticket #(s) "
+
+    data = request.data
+
+    my_json = data.decode('utf8').replace("'", '"')
+    json_data = json.loads(my_json)
+    ticket_numbers = json.loads(json_data["ticket_numbers"])
+
+    invalidTickets = []
+    for ticket_number in ticket_numbers:
+      if not isTicketAvailable(int(ticket_number)):
+          validationError = True
+          invalidTickets.append(int(ticket_number))
+
+    result = {"validationError":validationError, "message":message + json.dumps(invalidTickets)}
+
+    return jsonify(result)
+    
+@app.route("/payment/calculateTotal", methods=["POST"])
+def calculate_total():
+    total = 0.0
+
+    data = request.data
+
+    my_json = data.decode('utf8').replace("'", '"')
+    json_data = json.loads(my_json)
+    ticket_numbers = json.loads(json_data["ticket_numbers"])
+    numThisYearTicketsAry = json.loads(json_data["numThisYearTickets"])
+    numNextYearTicketsAry = json.loads(json_data["numNextYearTickets"])
+    phoneNumber = json_data["phoneNumber"]
+
+    numThisYearTickets = float(numThisYearTicketsAry[0][0])
+    numNextYearTickets = float(numNextYearTicketsAry[0][0])
+
+    for t in ticket_numbers:
+        total += 100.0
+    total += (numThisYearTickets * 10.0)
+    total += (numNextYearTickets * 5.0)
+
+    result = {"total":str(total), "phoneNumber":phoneNumber, "ticket_numbers":json.dumps(ticket_numbers), "numThisYearTickets":numThisYearTickets, "numNextYearTickets":numNextYearTickets}
+
+    return jsonify(result)
 
 @app.route("/payment/<ticket_number>/validate", methods=["POST"])
 def validate_ticket(ticket_number):

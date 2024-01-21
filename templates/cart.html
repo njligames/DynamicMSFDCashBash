@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Snippet - BBBootstrap</title>
+    <title>Mount Sinai Fire Department - Cash Bash</title>
     <link
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
       rel="stylesheet"
@@ -384,12 +384,42 @@
           <div
             class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
           >
-            <button
-              class="btn btn-warning btn-block btn-lg ml-2 pay-button"
-              type="button"
-            >
-              Proceed to Pay
-            </button>
+            <form name="MyForm{ticket_number}" action="payment" method="post">
+              <input type="hidden" name="cmd" value="_s-xclick" />
+              <table>
+                <tr>
+                  <td>
+                    <input
+                      type="hidden"
+                      name="on1"
+                      value="Winner Contact #"
+                    />Winner Contact #
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input type="text" name="os1" maxlength="200" required />
+                  </td>
+                </tr>
+              </table>
+              <input type="hidden" name="currency_code" value="USD" />
+
+              <input
+                class="close"
+                type="image"
+                src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif"
+                border="0"
+                name="submit"
+                alt="PayPal - The safer, easier way to pay online!"
+              />
+              <img
+                alt=""
+                border="0"
+                src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+                width="1"
+                height="1"
+              />
+            </form>
           </div>
         </div>
       </div>
