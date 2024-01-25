@@ -213,21 +213,44 @@ def getModalBlocks():
 
 
                 <!-- start button for a ticket -->
+                <button
+                    type="button"
+                    class="btn-default "
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+
+                          onclick="AddCashBashTicket('{ticket_number}')"
+                    >Add Cash Bash Ticket #{ticket_number}
+                </button>
                 <form name="MyForm{ticket_number}" action="cart" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
                       <tr>
-                         <td><input type="hidden" name="on0" value="{ticket_number}" />Cash Bash Ticket #{ticket_number}</td>
+                         <td><input type="hidden" name="on0" value="{ticket_number}" /> </td>
                       </tr>
                    </table>
                    <input type="hidden" name="currency_code" value="USD" />
 
 
-                   <input class="close" type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" />
+                   <input class="btn-primary" type="submit" value="Add Cash Bash Ticket #{ticket_number} and Pay" />
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
-                <!-- end button for a ticket -->
+                <div></div>
+                <form name="MyForm{ticket_number}_cart" action="cart" method="post" target="_blank">
+                   <input type="hidden" name="cmd" value="_s-xclick" />
+                   <input type="hidden" name="ticket_number" value="0" />
+                   <table>
+                      <tr>
+                         <td><input type="hidden" name="on0" value="0" /> </td>
+                      </tr>
+                   </table>
+                   <input type="hidden" name="currency_code" value="USD" />
+
+
+                   <input class="btn-primary" type="submit" value="View Cart" />
+                   <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
 
               </div>
               <div class="modal-footer"></div>
@@ -258,7 +281,7 @@ def index():
 def payment():
     data = request.form
 
-    phone_number = data["os1"]
+    phone_number = data["phone_number"]
     currency = "USD"
 
     return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, phone_number = phone_number)
@@ -270,7 +293,7 @@ def cart():
     ticket_number = data["ticket_number"]
     currency = "USD"
 
-    return render_template("cart.html", ticket_number = ticket_number)#, phone_number = phone_number, price = price)
+    return render_template("cart.html", ticket_number = ticket_number)
 
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment

@@ -16,16 +16,8 @@
       type="text/javascript"
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
     ></script>
+    <script src="{{ url_for('static', filename='assets/js/storage.js')}}"></script>
     <script>
-      function CheckBrowser() {
-        if ("localStorage" in window && window["localStorage"] !== null) {
-          // we can use localStorage object to store data
-          return true;
-        } else {
-          return false;
-        }
-      }
-
       $(document).ready(function () {
         const ticketViewLib = {
           showCashBashTickets: function () {
@@ -319,47 +311,9 @@
           },
         };
 
-        if (CheckBrowser()) {
-          count = localStorage.length;
-          if (count == 0) {
-            var cashBashTickets = ["{{ticket_number}}"];
-
-            localStorage.setItem(
-              "cashBashTickets",
-              JSON.stringify(cashBashTickets)
-            );
-
-            localStorage.setItem(
-              "cashBashTicketsChanceThisYear",
-              JSON.stringify([0])
-            );
-
-            localStorage.setItem(
-              "cashBashTicketsChanceNextYear",
-              JSON.stringify([0])
-            );
-          } else {
-            var cashBashTickets = JSON.parse(
-              localStorage.getItem("cashBashTickets")
-            );
-            var found = false;
-
-            var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
-
-            for (var i = 0; i < tickets.length; i++) {
-              if (tickets[i] == "{{ticket_number}}") {
-                found = true;
-              }
-            }
-            if (!found) {
-              cashBashTickets.push("{{ticket_number}}");
-            }
-            localStorage.setItem(
-              "cashBashTickets",
-              JSON.stringify(cashBashTickets)
-            );
-          }
-
+        if ("0" == "{{ticket_number}}") {
+          ticketViewLib.show();
+        } else if (AddCashBashTicket("{{ticket_number}}")) {
           ticketViewLib.show();
         }
       });
@@ -377,31 +331,30 @@
           <div id="cashBashTicketsChanceThisYear"></div>
           <div id="cashBashTicketsChanceNextYear"></div>
 
-          <!--
-                    <div class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"><input type="text" class="form-control border-0 gift-card" placeholder="discount code/gift card"><button class="btn btn-outline-warning btn-sm ml-2" type="button">Apply</button></div>
-                    -->
-
           <div
             class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
           >
-            <form name="MyForm{ticket_number}" action="payment" method="post">
+            <form name="MyForm" action="payment" method="post">
               <input type="hidden" name="cmd" value="_s-xclick" />
-              <table>
-                <tr>
-                  <td>
-                    <input
-                      type="hidden"
-                      name="on1"
-                      value="Winner Contact #"
-                    />Winner Contact #
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <input type="text" name="os1" maxlength="200" required />
-                  </td>
-                </tr>
-              </table>
+
+              <div
+                class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
+              >
+                <div>
+                  <input
+                    type="hidden"
+                    name="on1"
+                    value="Winner Contact #"
+                  />Winner Contact #
+                </div>
+                <input
+                  type="text"
+                  name="phone_number"
+                  maxlength="200"
+                  required
+                />
+              </div>
+
               <input type="hidden" name="currency_code" value="USD" />
 
               <input
