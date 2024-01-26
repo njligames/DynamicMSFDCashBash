@@ -10,11 +10,14 @@ function CheckBrowser() {
 function AddCashBashTicket(ticket_number) {
   if (CheckBrowser()) {
     count = localStorage.length;
+
+    var cashBashTickets = [];
+    isInitial = false;
     if (count == 0) {
-      var cashBashTickets = [ticket_number];
+      isInitial = true;
+    }
 
-      localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
-
+    if (isInitial) {
       localStorage.setItem(
         "cashBashTicketsChanceThisYear",
         JSON.stringify([0])
@@ -24,25 +27,27 @@ function AddCashBashTicket(ticket_number) {
         "cashBashTicketsChanceNextYear",
         JSON.stringify([0])
       );
-      return false;
+      cashBashTickets = [ticket_number];
     } else {
-      var cashBashTickets = JSON.parse(localStorage.getItem("cashBashTickets"));
       var found = false;
+      cashBashTickets = JSON.parse(localStorage.getItem("cashBashTickets"));
 
-      var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
-
-      for (var i = 0; i < tickets.length; i++) {
-        if (tickets[i] == ticket_number) {
+      for (var i = 0; i < cashBashTickets.length; i++) {
+        if (cashBashTickets[i] == ticket_number) {
           found = true;
         }
       }
       if (!found) {
         cashBashTickets.push(ticket_number);
       }
+    }
+
+    if (ticket_number >= 1 && ticket_number <= 500) {
       localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
     }
 
-    // ticketViewLib.show();
     return true;
   }
+
+  return false;
 }

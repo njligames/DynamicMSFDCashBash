@@ -311,9 +311,7 @@
           },
         };
 
-        if ("0" == "{{ticket_number}}") {
-          ticketViewLib.show();
-        } else if (AddCashBashTicket("{{ticket_number}}")) {
+        if (AddCashBashTicket("{{ticket_number}}")) {
           ticketViewLib.show();
         }
       });
