@@ -215,7 +215,7 @@ def getModalBlocks():
                 <!-- start button for a ticket -->
                 <button
                     type="button"
-                    class="btn-default "
+                    class="btn btn-secondary btn-custom"
                           data-bs-dismiss="modal"
                           aria-label="Close"
 
@@ -233,7 +233,7 @@ def getModalBlocks():
                    <input type="hidden" name="currency_code" value="USD" />
 
 
-                   <input class="btn-primary" type="submit" value="Add Cash Bash Ticket #{ticket_number} and Pay" />
+                   <input class="btn btn-primary btn-custom" type="submit" value="Add Cash Bash Ticket #{ticket_number} and Pay" />
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
                 <div></div>
@@ -248,7 +248,7 @@ def getModalBlocks():
                    <input type="hidden" name="currency_code" value="USD" />
 
 
-                   <input class="btn-primary" type="submit" value="View Cart" />
+                   <input class="btn btn-default btn-custom" type="submit" value="View Cart" />
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
 

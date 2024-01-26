@@ -4,12 +4,34 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Mount Sinai Fire Department - Cash Bash</title>
+    <!-- Vendor CSS Files -->
     <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      href="{{ url_for('static', filename='assets/vendor/aos/aos.css')}}"
       rel="stylesheet"
     />
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      href="{{ url_for('static', filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='assets/vendor/glightbox/css/glightbox.min.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='assets/vendor/swiper/swiper-bundle.min.css')}}"
+      rel="stylesheet"
+    />
+    <!-- Template Main CSS File -->
+    <link
+      href="{{ url_for('static', filename='assets/css/style.css')}}"
       rel="stylesheet"
     />
     <script
@@ -329,49 +351,30 @@
           <div id="cashBashTicketsChanceThisYear"></div>
           <div id="cashBashTicketsChanceNextYear"></div>
 
-          <div
-            class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
-          >
-            <form name="MyForm" action="payment" method="post">
-              <input type="hidden" name="cmd" value="_s-xclick" />
-
-              <div
-                class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
-              >
-                <div>
-                  <input
-                    type="hidden"
-                    name="on1"
-                    value="Winner Contact #"
-                  />Winner Contact #
-                </div>
-                <input
-                  type="text"
-                  name="phone_number"
-                  maxlength="200"
-                  required
-                />
-              </div>
-
-              <input type="hidden" name="currency_code" value="USD" />
-
+          <form name="MyForm" action="payment" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick" />
+            <div
+              class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
+            >
               <input
-                class="close"
-                type="image"
-                src="https://www.paypalobjects.com/en_US/i/btn/btn_cart_LG.gif"
-                border="0"
-                name="submit"
-                alt="PayPal - The safer, easier way to pay online!"
+                type="text"
+                name="phone_number"
+                class="form-control border-0 gift-card"
+                placeholder="Winner Contact Phone Number"
+                required
               />
-              <img
-                alt=""
-                border="0"
-                src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
-                width="1"
-                height="1"
-              />
-            </form>
-          </div>
+            </div>
+
+            <input type="hidden" name="currency_code" value="USD" />
+
+            <div
+              class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
+            >
+              <button class="btn btn-primary btn-custom" type="submit">
+                Proceed to Pay
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
