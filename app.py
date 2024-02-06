@@ -162,7 +162,7 @@ def getModalBlocks():
                 <ol>
                   <li>$100.00 Per Ticket. Winner need not be present.</li>
                   <li>
-                    All numbers will be drawn on September 23rd, 2023 at the Mt. Sinai
+                    All numbers will be drawn on September 21st, 2024 at the Mt. Sinai
                     Fire Department, Station 1, 133 Mount Sinai Avenue.
                   </li>
                   <li>
@@ -182,7 +182,7 @@ def getModalBlocks():
                   <li>
                     <strong>All tickets will be mailed to the address you put on the
                       application once your payment clears. Tickets purchased after
-                      9/1/2023 can be picked up at the gate with photo ID.</strong
+                      9/1/2024 can be picked up at the gate with photo ID.</strong
                     >
                   </li>
                   <li>
@@ -204,7 +204,7 @@ def getModalBlocks():
                 </ol>
                 <p>
                   <strong>
-                  Enter for a chance to win an additional free ticket for five more dollars, select in drop down.
+                  Enter for a chance to win an additional free ticket for five more dollars.
                     </strong
                   >
                 </p>
@@ -220,7 +220,7 @@ def getModalBlocks():
                           aria-label="Close"
 
                           onclick="AddCashBashTicket('{ticket_number}')"
-                    >Add Cash Bash Ticket #{ticket_number}
+                    >Add Cash Bash Ticket #{ticket_number} to Cart
                 </button>
                 <form name="MyForm{ticket_number}" action="cart" method="post" target="_blank">
                    <input type="hidden" name="cmd" value="_s-xclick" />
@@ -286,14 +286,14 @@ def payment():
 
     return render_template("payment.html", paypal_business_client_id=PAYPAL_BUSINESS_CLIENT_ID, currency = currency, phone_number = phone_number)
 
-@app.route('/cart', methods=['POST'])
+@app.route('/cart', methods=['POST', 'GET'])
 def cart():
+  ticket_number = 0
+  if request.method == 'POST':
     data = request.form
-
     ticket_number = data["ticket_number"]
-    currency = "USD"
 
-    return render_template("cart.html", ticket_number = ticket_number)
+  return render_template("cart.html", ticket_number = ticket_number)
 
 @app.route("/payment/<order_id>/capture", methods=["POST"])
 def capture_payment(order_id):  # Checks and confirms payment
@@ -306,7 +306,6 @@ def capture_payment(order_id):  # Checks and confirms payment
         json_data = json.loads(my_json)
         ticket_numbers = json.loads(json_data["ticket_numbers"])
 
-        numThisYearTickets = json.loads(json_data["numThisYearTickets"])
         numNextYearTickets = json.loads(json_data["numNextYearTickets"])
         phoneNumber = json.loads(json_data["phoneNumber"])
 
@@ -315,8 +314,7 @@ def capture_payment(order_id):  # Checks and confirms payment
           captured_tickets += str(ticket_number) + " "
           setTicketSold(int(ticket_number))
 
-        captured_payment["ticket_numbers"] = captured_tickets 
-        captured_payment["num_chances_this_year"] = numThisYearTickets[0][0]
+        captured_payment["ticket_numbers"] = captured_tickets
         captured_payment["num_chances_next_year"] = numNextYearTickets[0][0]
         captured_payment["phone_number"] = phoneNumber
         captured_payment["payment_approved"] = True
@@ -346,7 +344,7 @@ def validate_tickets():
     result = {"validationError":validationError, "message":message + json.dumps(invalidTickets)}
 
     return jsonify(result)
-    
+
 @app.route("/payment/calculateTotal", methods=["POST"])
 def calculate_total():
     total = 0.0
@@ -356,19 +354,16 @@ def calculate_total():
     my_json = data.decode('utf8').replace("'", '"')
     json_data = json.loads(my_json)
     ticket_numbers = json.loads(json_data["ticket_numbers"])
-    numThisYearTicketsAry = json.loads(json_data["numThisYearTickets"])
     numNextYearTicketsAry = json.loads(json_data["numNextYearTickets"])
     phoneNumber = json_data["phoneNumber"]
 
-    numThisYearTickets = float(numThisYearTicketsAry[0][0])
     numNextYearTickets = float(numNextYearTicketsAry[0][0])
 
     for t in ticket_numbers:
         total += 100.0
-    total += (numThisYearTickets * 10.0)
     total += (numNextYearTickets * 5.0)
 
-    result = {"total":str(total), "phoneNumber":phoneNumber, "ticket_numbers":json.dumps(ticket_numbers), "numThisYearTickets":numThisYearTickets, "numNextYearTickets":numNextYearTickets}
+    result = {"total":str(total), "phoneNumber":phoneNumber, "ticket_numbers":json.dumps(ticket_numbers), "numNextYearTickets":numNextYearTickets}
 
     return jsonify(result)
 

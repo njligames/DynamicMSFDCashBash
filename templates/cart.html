@@ -18,6 +18,10 @@
       rel="stylesheet"
     />
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link
       href="{{ url_for('static', filename='assets/vendor/boxicons/css/boxicons.min.css')}}"
       rel="stylesheet"
     />
@@ -39,6 +43,69 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
     ></script>
     <script src="{{ url_for('static', filename='assets/js/storage.js')}}"></script>
+
+    <style>
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      /* Track */
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+      }
+
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap");
+
+      body {
+        font-family: "Manrope", sans-serif;
+        background: #eee;
+      }
+
+      .size span {
+        font-size: 11px;
+      }
+
+      .color span {
+        font-size: 11px;
+      }
+
+      .product-deta {
+        margin-right: 70px;
+      }
+
+      .gift-card:focus {
+        box-shadow: none;
+      }
+
+      .pay-button {
+        color: #fff;
+      }
+
+      .pay-button:hover {
+        color: #fff;
+      }
+
+      .pay-button:focus {
+        color: #fff;
+        box-shadow: none;
+      }
+
+      .text-grey {
+        color: #a39f9f;
+      }
+
+      .qty i {
+        font-size: 11px;
+      }
+    </style>
     <script>
       $(document).ready(function () {
         const ticketViewLib = {
@@ -73,12 +140,13 @@
                   JSON.stringify(cashBashTickets)
                 );
                 if (cashBashTickets.length == 0) {
-                  // window.close();
+                  window.close();
                 }
                 ticketViewLib.showCashBashTickets();
               });
             });
           },
+          /*
           showCashBashTicketsChanceThisYear: function () {
             $("#cashBashTicketsChanceThisYear").empty();
             var cashBashTicketsChanceThisYearCount = JSON.parse(
@@ -132,7 +200,7 @@
                 });
               });
             });
-          },
+          },*/
           showCashBashTicketsChanceNextYear: function () {
             $("#cashBashTicketsChanceNextYear").empty();
             var cashBashTicketsChanceNextYearCount = JSON.parse(
@@ -190,10 +258,52 @@
           },
           show: function () {
             ticketViewLib.showCashBashTickets();
-            ticketViewLib.showCashBashTicketsChanceThisYear();
+            // ticketViewLib.showCashBashTicketsChanceThisYear();
             ticketViewLib.showCashBashTicketsChanceNextYear();
           },
           cashBashTickets: function (ticket_number) {
+            $("<div>", {
+              class:
+                "d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded",
+            })
+              .append(
+                $("<div>", { class: "mr-1" }).append(
+                  $("<img>", {
+                    class: "rounded",
+                    src: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp",
+                    width: "70",
+                  })
+                ),
+                $("<div>", {
+                  class:
+                    "d-flex flex-column align-items-center product-details",
+                }).append(
+                  $("<p>", { class: "lead fw-normal mb-2" }).text(
+                    "Cash Bash Ticket"
+                  ),
+                  $("<p>")
+                    .text("" + ticket_number)
+                    .prepend(
+                      $("<span>", { class: "text-muted" }).text(
+                        "Ticket Number "
+                      )
+                    )
+                ),
+                $("<div>", {
+                  class: "d-flex flex-row align-items-center qty",
+                }).append(),
+                $("<div>").append(
+                  $("<h5>", { class: "text-grey" }).text("$100.00")
+                ),
+                $("<div>", { class: "d-flex align-items-center" }).append(
+                  $("<i>", {
+                    class: "fa fa-trash mb-1 text-danger",
+                    id: "" + ticket_number,
+                  })
+                )
+              )
+              .appendTo("#cashBashTickets");
+            /*
             $("<div>", { class: "card rounded-3 mb-4" })
               .append(
                 $("<div>", { class: "card-body p-4" }).append(
@@ -238,54 +348,112 @@
                 )
               )
               .appendTo("#cashBashTickets");
+              */
           },
           cashBashTicketsChanceNextYear: function (count) {
-            $("<div>", { class: "card rounded-3 mb-4" })
-              .append(
-                $("<div>", { class: "card-body p-4" }).append(
-                  $("<div>", {
-                    class:
-                      "row d-flex justify-content-between align-items-center",
-                  }).append(
-                    $("<div>", { class: "col-md-2 col-lg-2 col-xl-2" }).append(
-                      $("<img>", {
-                        class: "img-fluid rounded-3",
-                        src: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp",
-                        alt: "Cotton T-shirt",
-                      })
-                    ),
-                    $("<div>", { class: "col-md-3 col-lg-3 col-xl-3" }).append(
-                      $("<p>", { class: "lead fw-normal mb-2" }).text(
-                        "Cash Bash Ticket Chance"
-                      ),
-                      $("<p>").prepend(
-                        $("<span>", { class: "text-muted" }).text(
-                          "2025 Cash Bash Ticket Chance"
-                        )
-                      )
-                    ),
-                    $("<div>", {
-                      class: "col-md-3 col-lg-3 col-xl-2 d-flex",
-                    }).append(
-                      $("<a>", { href: "#!", class: "text-danger" }).append(
-                        $("<i>", { class: "fa fa-minus text-danger next-year" })
-                      ),
-                      $("<h5>", {
-                        class: "text-grey mt-1 mr-1 ml-1 next-year",
-                      }).text("" + count),
-                      $("<a>", { href: "#!", class: "text-danger" }).append(
-                        $("<i>", { class: "fa fa-plus text-success next-year" })
-                      )
-                    ),
-                    $("<div>", {
-                      class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1",
-                    }).append($("<h5>", { class: "mb-0" }).text("$5.00"))
+            var tickets = JSON.parse(localStorage.getItem("cashBashTickets"));
+            if (tickets == null || tickets.length == 0) {
+              $("<div>", { class: "card rounded-3 mb-4" })
+                .append(
+                  $("<p>", { class: "lead fw-normal mb-2" }).text(
+                    "Cart is Empty."
                   )
                 )
-              )
-              .appendTo("#cashBashTicketsChanceNextYear");
+                .appendTo("#cashBashTicketsChanceNextYear");
+            } else {
+              $("<div>", {
+                class:
+                  "d-flex flex-row justify-content-between align-items-center p-2 bg-white mt-4 px-3 rounded",
+              })
+                .append(
+                  $("<div>", { class: "mr-1" }).append(
+                    $("<img>", {
+                      class: "rounded",
+                      src: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp",
+                      width: "70",
+                    })
+                  ),
+                  $("<div>", {
+                    class:
+                      "d-flex flex-column align-items-center product-details",
+                  }).append(
+                    $("<span>", { class: "font-weight-bold" }).text(
+                      "2025 Cash Bash Ticket Chance"
+                    )
+                  ),
+                  $("<div>", {
+                    class: "d-flex flex-row align-items-center qty",
+                  }).append(
+                    $("<i>", {
+                      class: "fa fa-minus text-danger next-year",
+                    }),
+                    $("<h5>", {
+                      class: "text-grey mt-1 mr-1 ml-1 next-year",
+                    }).text("1"),
+                    $("<i>", {
+                      class: "fa fa-plus text-success next-year",
+                    })
+                  ),
+                  $("<div>").append(
+                    $("<h5>", { class: "text-grey" }).text("$5.00")
+                  ),
+                  $("<div>", { class: "d-flex align-items-center" }).append()
+                )
+                .appendTo("#cashBashTicketsChanceNextYear");
+              /*
+              $("<div>", { class: "card rounded-3 mb-4" }).append(
+                  $("<div>", { class: "card-body p-4" }).append(
+                    $("<div>", {
+                      class:
+                        "row d-flex justify-content-between align-items-center",
+                    }).append(
+                      $("<div>", {
+                        class: "col-md-2 col-lg-2 col-xl-2",
+                      }).append(
+                        $("<img>", {
+                          class: "img-fluid rounded-3",
+                          src: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp",
+                          alt: "Cotton T-shirt",
+                        })
+                      ),
+                      $("<div>", {
+                        class: "col-md-3 col-lg-3 col-xl-3",
+                      }).append(
+                        $("<p>", { class: "lead fw-normal mb-2" }).text(
+                          "Cash Bash Ticket Chance"
+                        ),
+                        $("<p>").prepend(
+                          $("<span>", { class: "text-muted" }).text(
+                            "2025 Cash Bash Ticket Chance"
+                          )
+                        )
+                      ),
+                      $("<div>", {
+                        class: "col-md-3 col-lg-3 col-xl-2 d-flex",
+                      }).append(
+                        $("<i>", {
+                          class: "fa fa-minus text-danger next-year",
+                        }),
+                        $("<h5>", {
+                          class: "text-grey mt-1 mr-1 ml-1 next-year",
+                        }).text("" + count),
+                        $("<a>", { href: "#!", class: "text-danger" }).append(
+                          $("<i>", {
+                            class: "fa fa-plus text-success next-year",
+                          })
+                        )
+                      ),
+                      $("<div>", {
+                        class: "col-md-3 col-lg-2 col-xl-2 offset-lg-1",
+                      }).append($("<h5>", { class: "mb-0" }).text("$5.00"))
+                    )
+                  )
+                )
+                .appendTo("#cashBashTicketsChanceNextYear");
+                */
+            }
           },
-          cashBashTicketsChanceThisYear: function (count) {
+          /*cashBashTicketsChanceThisYear: function (count) {
             $("<div>", { class: "card rounded-3 mb-4" })
               .append(
                 $("<div>", { class: "card-body p-4" }).append(
@@ -330,7 +498,7 @@
                 )
               )
               .appendTo("#cashBashTicketsChanceThisYear");
-          },
+          },*/
         };
 
         if (AddCashBashTicket("{{ticket_number}}")) {
@@ -348,7 +516,7 @@
           </div>
 
           <div id="cashBashTickets"></div>
-          <div id="cashBashTicketsChanceThisYear"></div>
+          <!-- <div id="cashBashTicketsChanceThisYear"></div> -->
           <div id="cashBashTicketsChanceNextYear"></div>
 
           <form name="MyForm" action="payment" method="post">
@@ -370,10 +538,23 @@
             <div
               class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
             >
+              <button
+                class="btn btn-primary btn-custom btn-block btn-lg ml-2 pay-button"
+                type="submit"
+              >
+                Proceed to Pay
+              </button>
+            </div>
+
+            <!--
+            <div
+              class="d-flex flex-row align-items-center mt-3 p-2 bg-white rounded"
+            >
               <button class="btn btn-primary btn-custom" type="submit">
                 Proceed to Pay
               </button>
             </div>
+-->
           </form>
         </div>
       </div>

@@ -49,9 +49,11 @@
                     var tickets = JSON.parse(
                       localStorage.getItem("cashBashTickets")
                     );
+                    /*
                     var numThisYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceThisYear")
                     );
+                    */
                     var numNextYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceNextYear")
                     );
@@ -63,9 +65,11 @@
                       },
                       body: JSON.stringify({
                         ticket_numbers: JSON.stringify(tickets),
+                        /*
                         numThisYearTickets: JSON.stringify([
                           numThisYearTickets,
                         ]),
+                        */
                         numNextYearTickets: JSON.stringify([
                           numNextYearTickets,
                         ]),
@@ -76,7 +80,7 @@
                       .then((data) => {
                         var totalPrice = data.total;
                         var ticketNumbers = "";
-                        var numThisYearTickets = "";
+                        // var numThisYearTickets = "";
                         var numNextYearTickets = "";
 
                         return actions.order.create({
@@ -88,9 +92,9 @@
                                 ", Ticket #'s " +
                                 ticketNumbers +
                                 ", Number of Next Year Ticket Chances " +
-                                numNextYearTickets +
+                                numNextYearTickets /*+
                                 ", Number of This Year Ticket Chances " +
-                                numThisYearTickets,
+                                numThisYearTickets*/,
                               amount: {
                                 value: totalPrice, // Can also reference a variable or function
                               },
@@ -103,9 +107,11 @@
                     var tickets = JSON.parse(
                       localStorage.getItem("cashBashTickets")
                     );
+                    /*
                     var numThisYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceThisYear")
                     );
+                    */
                     var numNextYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceNextYear")
                     );
@@ -117,9 +123,9 @@
                       },
                       body: JSON.stringify({
                         ticket_numbers: JSON.stringify(tickets),
-                        numThisYearTickets: JSON.stringify([
+                        /*numThisYearTickets: JSON.stringify([
                           numThisYearTickets,
-                        ]),
+                        ]),*/
                         numNextYearTickets: JSON.stringify([
                           numNextYearTickets,
                         ]),
@@ -132,10 +138,12 @@
                           "cashBashTickets",
                           JSON.stringify([])
                         );
+                        /*
                         localStorage.setItem(
                           "cashBashTicketsChanceThisYear",
                           JSON.stringify([0])
                         );
+                        */
                         localStorage.setItem(
                           "cashBashTicketsChanceNextYear",
                           JSON.stringify([0])

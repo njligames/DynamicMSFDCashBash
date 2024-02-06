@@ -9,23 +9,18 @@ function CheckBrowser() {
 
 function AddCashBashTicket(ticket_number) {
   if (CheckBrowser()) {
-    count = localStorage.length;
-
     var cashBashTickets = [];
     isInitial = false;
-    if (count == 0) {
+
+    if (null == localStorage.getItem("cashBashTickets")) {
       isInitial = true;
     }
 
     if (isInitial) {
-      localStorage.setItem(
-        "cashBashTicketsChanceThisYear",
-        JSON.stringify([0])
-      );
 
       localStorage.setItem(
         "cashBashTicketsChanceNextYear",
-        JSON.stringify([0])
+        JSON.stringify([1])
       );
       cashBashTickets = [ticket_number];
     } else {
