@@ -49,11 +49,6 @@
                     var tickets = JSON.parse(
                       localStorage.getItem("cashBashTickets")
                     );
-                    /*
-                    var numThisYearTickets = JSON.parse(
-                      localStorage.getItem("cashBashTicketsChanceThisYear")
-                    );
-                    */
                     var numNextYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceNextYear")
                     );
@@ -92,9 +87,7 @@
                                 ", Ticket #'s " +
                                 ticketNumbers +
                                 ", Number of Next Year Ticket Chances " +
-                                numNextYearTickets /*+
-                                ", Number of This Year Ticket Chances " +
-                                numThisYearTickets*/,
+                                numNextYearTickets,
                               amount: {
                                 value: totalPrice, // Can also reference a variable or function
                               },
@@ -107,11 +100,6 @@
                     var tickets = JSON.parse(
                       localStorage.getItem("cashBashTickets")
                     );
-                    /*
-                    var numThisYearTickets = JSON.parse(
-                      localStorage.getItem("cashBashTicketsChanceThisYear")
-                    );
-                    */
                     var numNextYearTickets = JSON.parse(
                       localStorage.getItem("cashBashTicketsChanceNextYear")
                     );
@@ -134,19 +122,10 @@
                     })
                       .then((response) => response.json())
                       .then((orderData) => {
-                        localStorage.setItem(
-                          "cashBashTickets",
-                          JSON.stringify([])
-                        );
-                        /*
-                        localStorage.setItem(
-                          "cashBashTicketsChanceThisYear",
-                          JSON.stringify([0])
-                        );
-                        */
+                        localStorage.setItem("cashBashTickets", null);
                         localStorage.setItem(
                           "cashBashTicketsChanceNextYear",
-                          JSON.stringify([0])
+                          null
                         );
 
                         console.log(

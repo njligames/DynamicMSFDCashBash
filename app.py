@@ -397,8 +397,7 @@ def paypal_capture_function(order_id):
 def is_approved_payment(captured_payment):
     status = captured_payment.get("status")
     amount = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get("value")
-    currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get(
-        "currency_code")
+    currency_code = captured_payment.get("purchase_units")[0].get("payments").get("captures")[0].get("amount").get( "currency_code")
     print(f"Payment happened. Details: {status}, {amount}, {currency_code}")
     if status == "COMPLETED":
         return True

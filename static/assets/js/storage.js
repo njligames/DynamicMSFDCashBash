@@ -10,18 +10,12 @@ function CheckBrowser() {
 function AddCashBashTicket(ticket_number) {
   if (CheckBrowser()) {
     var cashBashTickets = [];
-    isInitial = false;
+
+    // if (null == localStorage.getItem("cashBashTicketsChanceNextYear")) {
+    localStorage.setItem("cashBashTicketsChanceNextYear", JSON.stringify([1]));
+    // }
 
     if (null == localStorage.getItem("cashBashTickets")) {
-      isInitial = true;
-    }
-
-    if (isInitial) {
-
-      localStorage.setItem(
-        "cashBashTicketsChanceNextYear",
-        JSON.stringify([1])
-      );
       cashBashTickets = [ticket_number];
     } else {
       var found = false;
@@ -36,7 +30,6 @@ function AddCashBashTicket(ticket_number) {
         cashBashTickets.push(ticket_number);
       }
     }
-
     if (ticket_number >= 1 && ticket_number <= 500) {
       localStorage.setItem("cashBashTickets", JSON.stringify(cashBashTickets));
     }
