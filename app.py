@@ -53,8 +53,24 @@ def recordAttempt(response):
 
     now = datetime.now()
     dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
-    body=[dt_string, response]
-    worksheet.append_row(body, table_range="A1:B1")
+    name = response.get("purchase_units")[0].get("shipping").get("name").get("full_name")
+    cashBashTickets = response.get("ticket_numbers")
+    numChances = int(response.get("num_chances_next_year"))
+    phoneNumber = str(response.get("phone_number"))
+
+    address_line_1 = response.get("purchase_units")[0].get("shipping").get("address").get("address_line_1")
+    admin_area_2   = response.get("purchase_units")[0].get("shipping").get("address").get("admin_area_2")
+    admin_area_1   = response.get("purchase_units")[0].get("shipping").get("address").get("admin_area_1")
+    postal_code    = response.get("purchase_units")[0].get("shipping").get("address").get("postal_code")
+    country_code   = response.get("purchase_units")[0].get("shipping").get("address").get("country_code")
+
+    body=[dt_string, name, cashBashTickets, str(numChances), str(phoneNumber), address_line_1, admin_area_2, admin_area_1, postal_code, country_code, str(response)]
+    worksheet.append_row(body, table_range="A1:K1")
+    
+    # obj = json.loads(response)
+    # print(obj)
+    # body=[dt_string, name, str(response)]
+    # worksheet.append_row(body, table_range="A1:C1")
 
 app = Flask(__name__)
 
@@ -321,7 +337,7 @@ def capture_payment(order_id):  # Checks and confirms payment
     else:
         captured_payment["payment_approved"] = False
 
-    recordAttempt(str(captured_payment))
+    recordAttempt(captured_payment)
     return jsonify(captured_payment)
 
 @app.route("/payment/validate", methods=["POST"])
