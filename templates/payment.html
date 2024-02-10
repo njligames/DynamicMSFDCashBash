@@ -122,10 +122,9 @@
                     })
                       .then((response) => response.json())
                       .then((orderData) => {
-                        localStorage.setItem("cashBashTickets", null);
-                        localStorage.setItem(
-                          "cashBashTicketsChanceNextYear",
-                          null
+                        localStorage.removeItem("cashBashTickets");
+                        localStorage.removeItem(
+                          "cashBashTicketsChanceNextYear"
                         );
 
                         console.log(

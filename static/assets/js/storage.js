@@ -11,9 +11,7 @@ function AddCashBashTicket(ticket_number) {
   if (CheckBrowser()) {
     var cashBashTickets = [];
 
-    // if (null == localStorage.getItem("cashBashTicketsChanceNextYear")) {
     localStorage.setItem("cashBashTicketsChanceNextYear", JSON.stringify([1]));
-    // }
 
     if (null == localStorage.getItem("cashBashTickets")) {
       cashBashTickets = [ticket_number];
