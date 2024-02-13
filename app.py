@@ -238,7 +238,7 @@ def getModalBlocks():
                           onclick="AddCashBashTicket('{ticket_number}')"
                     >Add Cash Bash Ticket #{ticket_number} to Cart
                 </button>
-                <form name="MyForm{ticket_number}" action="cart" method="post" target="_blank">
+                <form name="MyForm{ticket_number}" action="cart" method="post">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="{ticket_number}" />
                    <table>
@@ -253,7 +253,7 @@ def getModalBlocks():
                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
                 </form>
                 <div></div>
-                <form name="MyForm{ticket_number}_cart" action="cart" method="post" target="_blank">
+                <form name="MyForm{ticket_number}_cart" action="cart" method="post">
                    <input type="hidden" name="cmd" value="_s-xclick" />
                    <input type="hidden" name="ticket_number" value="0" />
                    <table>
