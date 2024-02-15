@@ -9,22 +9,20 @@ import gspread
 from datetime import datetime
 
 # # # # PAYPAL SANDBOX
-PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_BUSINESS_CLIENT_ID")
-PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_BUSINESS_SECRET")
-PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
+# PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_SANDBOX_BUSINESS_CLIENT_ID")
+# PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_SANDBOX_BUSINESS_SECRET")
+# PAYPAL_API_URL = f"https://api-m.sandbox.paypal.com"
 
 # # # # PAYPAL LIVE Details
-# PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_LIVE_BUSINESS_CLIENT_ID")
-# PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_LIVE_BUSINESS_SECRET")
-# PAYPAL_API_URL = f"https://api-m.paypal.com"
+PAYPAL_BUSINESS_CLIENT_ID = os.getenv("PAYPAL_LIVE_BUSINESS_CLIENT_ID")
+PAYPAL_BUSINESS_SECRET = os.getenv("PAYPAL_LIVE_BUSINESS_SECRET")
+PAYPAL_API_URL = f"https://api-m.paypal.com"
 
 class Tickets:
     def __init__(self):
-        manual_sheet_name = "Cash Bash (Manual)"
         computer_sheet_name = "Cash Bash (Website)"
         sa = gspread.service_account(filename="service_account.json")
 
-        manual_sheet = sa.open(manual_sheet_name)
         computer_sheet = sa.open(computer_sheet_name)
 
         self._wks = computer_sheet.worksheet("2024")
