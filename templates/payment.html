@@ -74,9 +74,9 @@
                       .then((response) => response.json())
                       .then((data) => {
                         var totalPrice = data.total;
-                        var ticketNumbers = "";
+                        var ticketNumbers = data.ticket_numbers;
                         // var numThisYearTickets = "";
-                        var numNextYearTickets = "";
+                        var numNextYearTickets = data.numNextYearTickets;
 
                         return actions.order.create({
                           purchase_units: [
@@ -86,7 +86,7 @@
                                 "{{phone_number}}" +
                                 ", Ticket #'s " +
                                 ticketNumbers +
-                                ", Number of Next Year Ticket Chances " +
+                                ", Number of Ticket Chances " +
                                 numNextYearTickets,
                               amount: {
                                 value: totalPrice, // Can also reference a variable or function
