@@ -64,7 +64,7 @@ def recordAttempt(response):
 
     body=[dt_string, name, cashBashTickets, str(numChances), str(phoneNumber), address_line_1, admin_area_2, admin_area_1, postal_code, country_code, str(response)]
     worksheet.append_row(body, table_range="A1:K1")
-    
+
     # obj = json.loads(response)
     # print(obj)
     # body=[dt_string, name, str(response)]
@@ -321,7 +321,9 @@ def capture_payment(order_id):  # Checks and confirms payment
         ticket_numbers = json.loads(json_data["ticket_numbers"])
 
         numNextYearTickets = json.loads(json_data["numNextYearTickets"])
-        phoneNumber = json.loads(json_data["phoneNumber"])
+        phoneNumber = "none"
+        if "phoneNumber" in json_data.keys():
+            phoneNumber = json.loads(json_data["phoneNumber"])
 
         captured_tickets = ""
         for ticket_number in ticket_numbers:
